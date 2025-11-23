@@ -72,6 +72,49 @@ try {
 }
 
 // ===============================
+// SISTEMA DE BOTÃO VOLTAR FIXO
+// ===============================
+
+// Criar botão voltar fixo
+function createFixedBackButton() {
+    // Remove o botão existente se houver
+    const existingBtn = document.querySelector('.fixed-back-btn');
+    if (existingBtn) {
+        existingBtn.remove();
+    }
+
+    // Cria o novo botão fixo
+    const fixedBackBtn = document.createElement('button');
+    fixedBackBtn.className = 'fixed-back-btn';
+    fixedBackBtn.innerHTML = '<i class="fas fa-arrow-left"></i> <span>Voltar</span>';
+    fixedBackBtn.onclick = goBackToHome;
+    
+    // Adiciona ao body
+    document.body.appendChild(fixedBackBtn);
+    
+    return fixedBackBtn;
+}
+
+// Mostrar/ocultar botão voltar baseado na página
+function updateFixedBackButton() {
+    const fixedBackBtn = document.querySelector('.fixed-back-btn');
+    
+    if (isHomePage() || window.location.hash === '#/' || !window.location.hash) {
+        // Esconder na página inicial
+        if (fixedBackBtn) {
+            fixedBackBtn.style.display = 'none';
+        }
+    } else {
+        // Mostrar em outras páginas
+        if (fixedBackBtn) {
+            fixedBackBtn.style.display = 'flex';
+        } else {
+            createFixedBackButton();
+        }
+    }
+}
+
+// ===============================
 // SISTEMA DE DOWNLOAD DIRETO
 // ===============================
 
@@ -758,6 +801,52 @@ function checkFirebaseConnection() {
 checkFirebaseConnection();
 
 // ===============================
+// SISTEMA DE DIREITOS AUTORAIS AUTOMÁTICO
+// ===============================
+
+// Gerar seção de direitos autorais baseada nos dados do mangá
+function generateCopyrightSection(manga) {
+    // Verificar se o mangá tem informações específicas de direitos autorais
+    const hasCopyrightInfo = manga.copyrightInfo || manga.originalLink || manga.officialLink;
+    
+    if (hasCopyrightInfo) {
+        // Usar informações específicas do mangá se disponíveis
+        const copyrightInfo = manga.copyrightInfo || {};
+        return `
+            <div class="credit-notice">
+                <div class="credit-header">
+                    <i class="fas fa-info-circle"></i>
+                    <h4>Informações de Direitos Autorais</h4>
+                </div>
+                <div class="credit-content">
+                    ${copyrightInfo.author ? `<p><strong>Créditos ao Autor Original:</strong> ${copyrightInfo.author}</p>` : ''}
+                    ${copyrightInfo.originalTitle ? `<p><strong>Título Original:</strong> ${copyrightInfo.originalTitle}</p>` : `<p><strong>Título Original:</strong> ${manga.title}</p>`}
+                    ${manga.originalLink ? `<p><strong>Link Oficial:</strong> <a href="${manga.originalLink}" target="_blank">${manga.originalLink}</a></p>` : ''}
+                    ${manga.officialLink ? `<p><strong>Link Oficial:</strong> <a href="${manga.officialLink}" target="_blank">${manga.officialLink}</a></p>` : ''}
+                    <p><strong>Tradução:</strong> Equipe MangaTachi</p>
+                    ${copyrightInfo.disclaimer ? `<p class="disclaimer">${copyrightInfo.disclaimer}</p>` : ''}
+                </div>
+            </div>
+        `;
+    } else {
+        // Template padrão para mangás sem informações específicas
+        return `
+            <div class="credit-notice">
+                <div class="credit-header">
+                    <i class="fas fa-info-circle"></i>
+                    <h4>Informações de Direitos Autorais</h4>
+                </div>
+                <div class="credit-content">
+                    <p><strong>Créditos ao Autor Original:</strong> ${manga.author}</p>
+                    <p><strong>Título Original:</strong> ${manga.title}</p>
+                    <p><strong>Tradução:</strong> Equipe MangaTachi</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// ===============================
 // INICIALIZAÇÃO PRINCIPAL
 // ===============================
 
@@ -772,6 +861,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar sistema de download
     initializeDownloadSystem();
     
+    // Inicializar botão voltar fixo
+    createFixedBackButton();
+    updateFixedBackButton();
+    
     // Verificar se estamos em uma rota de obra e processar
     processCurrentRoute();
 });
@@ -785,6 +878,9 @@ function processCurrentRoute() {
     
     // Sempre esconder carrossel primeiro, depois mostrar apenas se for home
     hideCarousel();
+    
+    // Atualizar botão voltar
+    updateFixedBackButton();
     
     // Se tiver hash, é uma rota SPA
     if (hash && hash.startsWith('#/')) {
@@ -1456,7 +1552,7 @@ function findChapter(manga, chapterNumber) {
     return null;
 }
 
-// Gerar HTML da página de detalhes (SPA) - AGORA SEM BOTÃO DE DOWNLOAD GRANDE
+// Gerar HTML da página de detalhes (SPA) - COM SISTEMA AUTOMÁTICO DE DIREITOS AUTORAIS
 function generateMangaDetailHTML(manga) {
     const totalChapters = getTotalChapters(manga);
     const slug = slugify(manga.title);
@@ -1476,6 +1572,10 @@ function generateMangaDetailHTML(manga) {
                         <img src="${manga.coverUrl}" alt="${manga.title}" class="manga-detail-cover" loading="lazy">
                         
                         <div class="manga-detail-info">
+                            <!-- SEÇÃO DE DIREITOS AUTORAIS AUTOMÁTICA -->
+                            ${generateCopyrightSection(manga)}
+                            <!-- FIM DOS DIREITOS AUTORAIS -->
+
                             <div class="manga-detail-meta">
                                 <div class="meta-item">
                                     <i class="fas fa-user-pen"></i>
@@ -1614,6 +1714,7 @@ function goBackToHome() {
     cleanupReaderScrollSystem();
     showHeaderElements();
     navigateToSPA('/');
+    updateFixedBackButton(); // Atualizar botão quando a hash mudar
 }
 
 // Voltar para a página do mangá
@@ -1621,6 +1722,7 @@ function goBackToManga(mangaSlug) {
     cleanupReaderScrollSystem();
     const mangaUrl = `/obras/${mangaSlug}`;
     navigateToSPA(mangaUrl);
+    updateFixedBackButton(); // Atualizar botão quando a hash mudar
 }
 
 // Configurar eventos da página de detalhes
@@ -1738,6 +1840,7 @@ window.addEventListener('popstate', function(event) {
 // Handle hash changes for SPA
 window.addEventListener('hashchange', function(event) {
     processCurrentRoute();
+    updateFixedBackButton(); // Atualizar botão quando a hash mudar
 });
 
 // ===============================
@@ -1806,7 +1909,7 @@ function generateShareUrl(manga, chapter = null) {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)+/g, '');
     
-    let shareUrl = `https://mangaroom-scan.vercel.app/?manga=${slug}`;
+    let shareUrl = `https://mangatachi.vercel.app/?manga=${slug}`;
     
     if (chapter) {
         shareUrl += `&chapter=${chapter.chapterNumber}`;
@@ -1931,3 +2034,70 @@ function initializeLazyLoading() {
         });
     }
 }
+
+// ===============================
+// ESTILOS CSS PARA OS CRÉDITOS (ADICIONADOS DINAMICAMENTE)
+// ===============================
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Adicionar estilos CSS para os créditos
+    const creditStyles = `
+        <style>
+            .credit-notice {
+                background: linear-gradient(135deg, rgba(30, 136, 229, 0.1), rgba(66, 165, 245, 0.05));
+                border: 1px solid rgba(30, 136, 229, 0.3);
+                border-radius: 8px;
+                padding: 1rem;
+                margin: 1.5rem 0;
+                font-size: 0.9rem;
+            }
+            
+            .credit-header {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 0.8rem;
+                color: var(--primary-color);
+            }
+            
+            .credit-header h4 {
+                margin: 0;
+                font-size: 1rem;
+            }
+            
+            .credit-content p {
+                margin: 0.3rem 0;
+                line-height: 1.4;
+            }
+            
+            .credit-content .disclaimer {
+                margin-top: 0.8rem;
+                padding-top: 0.8rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                font-style: italic;
+                color: var(--text-gray);
+                display: flex;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .credit-content a {
+                color: var(--primary-color);
+                text-decoration: none;
+            }
+            
+            .credit-content a:hover {
+                text-decoration: underline;
+            }
+            
+            @media (max-width: 768px) {
+                .credit-notice {
+                    margin: 1rem 0;
+                    padding: 0.8rem;
+                }
+            }
+        </style>
+    `;
+    
+    document.head.insertAdjacentHTML('beforeend', creditStyles);
+});

@@ -741,29 +741,42 @@ const mangas = [
         }
     ]
 }, 
-    {
-        id: 6,
-        title: "Elf no Sato ni Mayoikondara",
-        description: "Um homem encontra-se misteriosamente transportado para uma vila habitada exclusivamente por elfas sensuais. Preso neste mundo fantástico, ele precisa se adaptar à vida na aldeia enquanto lida com a atenção romântica e lasciva das belas elfas que desejam se acasalar com ele.",
-        author: "Miyashita Kenta",
-        genres: ["Ecchi", "Harem", "Romance", "Adulto"],
-        translationTeam: "MangaRoom",
-        status: "Ongoing",
-        coverUrl: "https://imgpx.com/en/gz2QgURhtLNA.jpg",
-        chapters: [
-            {
-                chapterNumber: 1,
-                title: "Capítulo 1",
-                pages: [
-                    "https://imgpx.com/en/BUTra8aMLe81.jpeg",
-                    "https://imgpx.com/en/qW8XH4OUmf7W.jpeg",
-                    "https://imgpx.com/en/lN6F1o4bbLot.jpeg", 
-                    "https://imgpx.com/en/xp5JNdBGoGf4.jpeg"
-                ],
-                type: "chapter"
-            }
-        ]
+{
+    id: 6,
+    title: "Elf no Sato ni Mayoikondara",
+    description: "Um homem encontra-se misteriosamente transportado para uma vila habitada exclusivamente por elfas sensuais. Preso neste mundo fantástico, ele precisa se adaptar à vida na aldeia enquanto lida com a atenção romântica e lasciva das belas elfas que desejam se acasalar com ele.",
+    author: "Miyashita Kenta",
+    genres: ["Ecchi", "Harem", "Romance", "Adulto"],
+    translationTeam: "MangaRoom",
+    status: "Ongoing",
+    coverUrl: "https://imgpx.com/en/gz2QgURhtLNA.jpg",
+    
+    // INFORMAÇÕES DE DIREITOS AUTORAIS
+    copyrightInfo: {
+        author: "Miyashita Kenta (宮下健太)",
+        originalTitle: "エルフの里に迷い込んだら",
+        originalTitleRomaji: "Elf no Sato ni Mayoikondara",
+        publisher: "Wani Books",
+        magazine: "Comic Gum",
+        disclaimer: "<i class='fas fa-exclamation-triangle'></i> Esta obra é distribuída com permissão para fins de tradução e disponibilização gratuita. Apoie o autor original adquirindo a obra oficial quando disponível."
     },
+    originalLink: "https://www.wani.com/comic/gum/",
+    officialLink: "https://www.cmoa.jp/title/217599/",
+    
+    chapters: [
+        {
+            chapterNumber: 1,
+            title: "Capítulo 1",
+            pages: [
+                "https://imgpx.com/en/BUTra8aMLe81.jpeg",
+                "https://imgpx.com/en/qW8XH4OUmf7W.jpeg",
+                "https://imgpx.com/en/lN6F1o4bbLot.jpeg", 
+                "https://imgpx.com/en/xp5JNdBGoGf4.jpeg"
+            ],
+            type: "chapter"
+        }
+    ]
+},
             {
             id: 11,
             title: "E~w Kanojo-san Tsu~tai ♡",
@@ -1111,66 +1124,3 @@ if (typeof module !== 'undefined' && module.exports) {
 // Exportar para uso global no navegador
 window.mangasData = mangas;
 
-// EXEMPLO DE COMO ADICIONAR MAIS MANGÁ:
-/*
-const novoManga = {
-    id: 7, // Sempre um ID único
-    title: "Novo Mangá",
-    description: "Descrição do novo mangá...",
-    author: "Nome do Autor",
-    genres: ["Ação", "Aventura"],
-    translationTeam: "Equipe de Scan",
-    status: "Em andamento",
-    coverUrl: "https://link-para-capa.jpg",
-    chapters: [
-        {
-            chapterNumber: 1,
-            title: "Primeiro Capítulo",
-            pages: [
-                "https://link-pagina1.jpg",
-                "https://link-pagina2.jpg"
-            ],
-            type: "chapter"
-        }
-    ]
-};
-mangas.push(novoManga);
-*/
-
-// EXEMPLO DE COMO ADICIONAR MAIS CAPÍTULO:
-/*
-// Encontrar o mangá primeiro
-const manga = mangas.find(m => m.id === 1);
-if (manga) {
-    if (!manga.chapters) manga.chapters = [];
-    manga.chapters.push({
-        chapterNumber: manga.chapters.length + 1,
-        title: "Novo Capítulo",
-        pages: [
-            "https://link-pagina1.jpg",
-            "https://link-pagina2.jpg"
-        ],
-        type: "chapter"
-    });
-}
-*/
-
-// EXEMPLO DE COMO ADICIONAR MAIS VOLUME:
-/*
-const manga = mangas.find(m => m.id === 2);
-if (manga) {
-    if (!manga.volumes) manga.volumes = [];
-    manga.volumes.push({
-        volumeNumber: manga.volumes.length + 1,
-        title: "Novo Volume",
-        chapters: [
-            {
-                chapterNumber: 1,
-                title: "Capítulo do Volume",
-                pages: ["https://link-pagina1.jpg"],
-                type: "chapter"
-            }
-        ]
-    });
-}
-*/

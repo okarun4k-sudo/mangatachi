@@ -3,40 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Perfil - MangaScan</title>
+    <title>Meu Perfil - MangaTachi</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* ESTILOS ESPECÍFICOS PARA O PERFIL */
+        /* ESTILOS ESPECÍFICOS PARA O PERFIL - VERSÃO PROFISSIONAL */
         .profile-container {
-            max-width: 935px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 2rem 1rem;
         }
 
-        /* Header do perfil - Estilo Instagram */
+        /* Header do perfil - Design profissional */
         .profile-header {
             display: flex;
-            gap: 5rem;
+            gap: 4rem;
             margin-bottom: 3rem;
-            padding: 0 2rem;
+            padding: 2rem;
+            background: var(--background-card);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
         }
 
         .profile-avatar-container {
             flex-shrink: 0;
+            position: relative;
         }
 
         .profile-avatar {
-            width: 150px;
-            height: 150px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--primary-color);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 4px solid var(--primary-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .profile-status {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            border: 3px solid var(--background-card);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .profile-info-main {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .profile-username-section {
@@ -44,38 +82,97 @@
             align-items: center;
             gap: 1.5rem;
             margin-bottom: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .profile-username {
-            font-size: 1.8rem;
-            font-weight: 300;
+            font-size: 2rem;
+            font-weight: 700;
             color: var(--text-light);
             margin: 0;
+            background: linear-gradient(135deg, var(--text-light), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .profile-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .profile-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-premium {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+        }
+
+        .badge-verified {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .badge-supporter {
+            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+            color: white;
+        }
+
+        .badge-translator {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
         }
 
         .profile-actions {
             display: flex;
             gap: 0.8rem;
+            margin-bottom: 1.5rem;
         }
 
         .profile-btn {
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 1.2rem;
             border-radius: 8px;
             font-weight: 600;
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
             border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .btn-edit {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(45, 90, 160, 0.4);
+        }
+
+        .btn-settings {
             background: rgba(255, 255, 255, 0.1);
             color: var(--text-light);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .btn-edit:hover {
+        .btn-settings:hover {
             background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
         }
 
         .btn-logout {
@@ -86,56 +183,101 @@
 
         .btn-logout:hover {
             background: rgba(220, 53, 69, 0.3);
+            transform: translateY(-2px);
         }
 
         .profile-stats {
-            display: flex;
-            gap: 2.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .stat-item {
             text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
         }
 
         .stat-number {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-light);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
             display: block;
+            margin-bottom: 0.3rem;
         }
 
         .stat-label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-gray);
+            font-weight: 500;
         }
 
         .profile-bio {
             margin-bottom: 1rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .profile-display-name {
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             font-weight: 600;
             color: var(--text-light);
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .profile-bio-text {
             color: var(--text-light);
-            line-height: 1.4;
-            opacity: 0.8;
+            line-height: 1.6;
+            opacity: 0.9;
+            margin-bottom: 1rem;
         }
 
-        /* Seção de informações - Estilo moderno com fundo do site */
+        .profile-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Seção de informações - Design moderno */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
         .info-section {
             background: var(--background-card);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 2rem;
-            margin-bottom: 2rem;
             box-shadow: var(--card-shadow);
             border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
+            overflow: hidden;
         }
 
         .info-section::before {
@@ -146,13 +288,23 @@
             right: 0;
             height: 4px;
             background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
-            border-radius: 12px 12px 0 0;
+            border-radius: 16px 16px 0 0;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title i {
+            color: var(--primary-color);
         }
 
         .info-item {
@@ -161,14 +313,24 @@
             align-items: center;
             padding: 1rem;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            border-left: 3px solid var(--primary-color);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
         }
 
         .info-label {
             font-weight: 600;
             color: var(--text-light);
             font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .info-value {
@@ -177,7 +339,6 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            opacity: 0.9;
         }
 
         .email-toggle {
@@ -202,7 +363,7 @@
             gap: 0.3rem;
             background: rgba(76, 175, 80, 0.2);
             color: #4caf50;
-            padding: 0.3rem 0.6rem;
+            padding: 0.3rem 0.8rem;
             border-radius: 12px;
             font-size: 0.75rem;
             font-weight: 600;
@@ -214,44 +375,25 @@
             gap: 0.3rem;
             background: rgba(106, 90, 205, 0.2);
             color: #6A5ACD;
-            padding: 0.3rem 0.6rem;
+            padding: 0.3rem 0.8rem;
             border-radius: 12px;
             font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .version-footer {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.9rem;
-            color: var(--text-gray);
             font-weight: 600;
         }
 
         /* Seção de mangás curtidos */
         .liked-mangas-section {
             background: var(--background-card);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 2rem;
             box-shadow: var(--card-shadow);
             border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--text-light);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            margin-bottom: 2rem;
         }
 
         .liked-mangas-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 1.5rem;
         }
 
@@ -262,6 +404,7 @@
             transition: all 0.3s ease;
             cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
         }
 
         .liked-manga-card:hover {
@@ -272,8 +415,13 @@
 
         .liked-manga-cover {
             width: 100%;
-            height: 200px;
+            height: 220px;
             object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .liked-manga-card:hover .liked-manga-cover {
+            transform: scale(1.05);
         }
 
         .liked-manga-title {
@@ -289,6 +437,18 @@
             line-height: 1.3;
         }
 
+        .liked-manga-meta {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
         .no-liked-mangas {
             text-align: center;
             padding: 3rem;
@@ -302,7 +462,160 @@
             opacity: 0.5;
         }
 
+        /* Seção de histórico de leitura */
+        .reading-history-section {
+            background: var(--background-card);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        .history-cover {
+            width: 60px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-title {
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.3rem;
+        }
+
+        .history-chapter {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            margin-bottom: 0.3rem;
+        }
+
+        .history-date {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+        }
+
+        .history-progress {
+            width: 100px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 3px;
+        }
+
+        /* Seção de conquistas */
+        .achievements-section {
+            background: var(--background-card);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .achievement-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+
+        .achievement-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .achievement-card.locked .achievement-icon {
+            color: var(--text-gray);
+        }
+
+        .achievement-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-desc {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+        }
+
+        .version-footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            font-weight: 600;
+        }
+
         /* Responsividade */
+        @media (max-width: 1024px) {
+            .profile-header {
+                gap: 2rem;
+            }
+            
+            .profile-avatar {
+                width: 140px;
+                height: 140px;
+            }
+        }
+
         @media (max-width: 768px) {
             .profile-container {
                 padding: 1rem 0.5rem;
@@ -311,7 +624,8 @@
             .profile-header {
                 flex-direction: column;
                 gap: 2rem;
-                padding: 0 1rem;
+                padding: 1.5rem;
+                text-align: center;
             }
 
             .profile-avatar {
@@ -327,17 +641,22 @@
             }
 
             .profile-username {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
+            }
+
+            .profile-actions {
+                justify-content: center;
+                flex-wrap: wrap;
             }
 
             .profile-stats {
-                justify-content: center;
-                gap: 2rem;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                padding: 1rem;
             }
 
             .info-section {
                 padding: 1.5rem;
-                margin: 0 1rem 2rem;
             }
 
             .info-grid {
@@ -345,40 +664,57 @@
                 gap: 1rem;
             }
 
-            .liked-mangas-section {
-                margin: 0 1rem;
+            .liked-mangas-section,
+            .reading-history-section,
+            .achievements-section {
                 padding: 1.5rem;
+                margin: 0 0 1.5rem 0;
             }
 
             .liked-mangas-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
             .liked-manga-cover {
-                height: 160px;
+                height: 190px;
+            }
+
+            .achievements-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
             }
         }
 
         @media (max-width: 480px) {
             .profile-stats {
-                gap: 1.5rem;
+                grid-template-columns: 1fr;
             }
 
             .stat-number {
-                font-size: 1rem;
-            }
-
-            .stat-label {
-                font-size: 0.8rem;
+                font-size: 1.5rem;
             }
 
             .liked-mangas-grid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .liked-manga-cover {
-                height: 140px;
+                height: 180px;
+            }
+
+            .achievements-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .history-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .history-cover {
+                width: 80px;
+                height: 100px;
             }
         }
 
@@ -388,12 +724,24 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .profile-header, .info-section, .liked-mangas-section {
-            animation: fadeIn 0.5s ease-out;
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        .info-section { animation-delay: 0.1s; }
-        .liked-mangas-section { animation-delay: 0.2s; }
+        .profile-header, .info-section, .liked-mangas-section, 
+        .reading-history-section, .achievements-section {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .profile-stats .stat-item {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .stat-item:nth-child(1) { animation-delay: 0.1s; }
+        .stat-item:nth-child(2) { animation-delay: 0.2s; }
+        .stat-item:nth-child(3) { animation-delay: 0.3s; }
+        .stat-item:nth-child(4) { animation-delay: 0.4s; }
     </style>
 </head>
 <body>
@@ -404,7 +752,7 @@
                     <i class="fas fa-arrow-left"></i> Voltar
                 </button>
                 <h1 class="logo">
-                    <i class="fas fa-book"></i> MangaScan
+                    <i class="fas fa-book"></i> MangaTachi
                 </h1>
                 <div style="width: 40px;"></div>
             </div>
@@ -414,58 +762,90 @@
     <main class="main-content">
         <div class="container">
             <div class="profile-container">
-                <!-- Header do perfil - Estilo Instagram -->
+                <!-- Header do perfil - Design profissional -->
                 <div class="profile-header">
                     <div class="profile-avatar-container">
                         <img id="profileAvatar" src="" alt="Avatar" class="profile-avatar">
+                        <div class="profile-status"></div>
                     </div>
                     
                     <div class="profile-info-main">
                         <div class="profile-username-section">
                             <h1 id="profileUsername" class="profile-username">carregando...</h1>
-                            <div class="profile-actions">
-                                <button class="profile-btn btn-edit">
-                                    <i class="fas fa-edit"></i> Editar perfil
-                                </button>
-                                <button onclick="logout()" class="profile-btn btn-logout">
-                                    <i class="fas fa-sign-out-alt"></i> Sair
-                                </button>
+                            <div class="profile-badges" id="profileBadges">
+                                <!-- Badges serão carregadas dinamicamente -->
                             </div>
+                        </div>
+                        
+                        <div class="profile-actions">
+                            <button class="profile-btn btn-edit">
+                                <i class="fas fa-edit"></i> Editar Perfil
+                            </button>
+                            <button class="profile-btn btn-settings">
+                                <i class="fas fa-cog"></i> Configurações
+                            </button>
+                            <button onclick="logout()" class="profile-btn btn-logout">
+                                <i class="fas fa-sign-out-alt"></i> Sair
+                            </button>
                         </div>
                         
                         <div class="profile-stats">
                             <div class="stat-item">
                                 <span id="mangasCount" class="stat-number">0</span>
-                                <span class="stat-label">Mangás curtidos</span>
+                                <span class="stat-label">Mangás Curtidos</span>
                             </div>
                             <div class="stat-item">
-                                <span id="requestsCount" class="stat-number">0</span>
-                                <span class="stat-label">Pedidos enviados</span>
+                                <span id="readingTime" class="stat-number">0h</span>
+                                <span class="stat-label">Tempo de Leitura</span>
+                            </div>
+                            <div class="stat-item">
+                                <span id="chaptersRead" class="stat-number">0</span>
+                                <span class="stat-label">Capítulos Lidos</span>
                             </div>
                             <div class="stat-item">
                                 <span id="memberSince" class="stat-number">-</span>
-                                <span class="stat-label">Membro desde</span>
+                                <span class="stat-label">Membro Desde</span>
                             </div>
                         </div>
                         
                         <div class="profile-bio">
-                            <div id="profileDisplayName" class="profile-display-name">Carregando...</div>
+                            <div id="profileDisplayName" class="profile-display-name">
+                                <i class="fas fa-user"></i> Carregando...
+                            </div>
                             <div id="profileBio" class="profile-bio-text">
-                                Entusiasta de mangás • Leitor ávido • Membro MangaScan
+                                Entusiasta de mangás • Leitor ávido • Membro MangaTachi
+                            </div>
+                            <div class="profile-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span id="userLocation">Brasil</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span id="joinDate">-</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Seção de informações - Estilo moderno -->
-                <div class="info-section">
-                    <div class="info-grid">
+                <!-- Grid de informações -->
+                <div class="info-grid">
+                    <!-- Informações da conta -->
+                    <div class="info-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-user-cog"></i> Informações da Conta
+                        </h2>
                         <div class="info-item">
-                            <span class="info-label">ID DO DISCORD</span>
+                            <span class="info-label">
+                                <i class="fas fa-id-card"></i> ID DO DISCORD
+                            </span>
                             <span id="infoId" class="info-value">-</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">EMAIL</span>
+                            <span class="info-label">
+                                <i class="fas fa-envelope"></i> EMAIL
+                            </span>
                             <span class="info-value">
                                 <span id="infoEmail">•••••••••••</span>
                                 <button class="email-toggle" onclick="toggleEmailVisibility()">
@@ -474,17 +854,66 @@
                             </span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">CONTA VERIFICADA</span>
+                            <span class="info-label">
+                                <i class="fas fa-shield-alt"></i> CONTA VERIFICADA
+                            </span>
                             <span id="infoVerified" class="info-value">-</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">CURTIDAS EM MANGÁS</span>
+                            <span class="info-label">
+                                <i class="fas fa-heart"></i> CURTIDAS EM MANGÁS
+                            </span>
                             <span id="infoLikes" class="info-value">0</span>
                         </div>
                     </div>
-                    
-                    <div class="version-footer" id="versionFooter">
-                        VERSÃO DO SITE 3.0.1 (15)
+
+                    <!-- Informações da comunidade -->
+                    <div class="info-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-users"></i> Comunidade
+                        </h2>
+                        <div class="info-item">
+                            <span class="info-label">
+                                <i class="fas fa-trophy"></i> Nível
+                            </span>
+                            <span class="info-value">
+                                <span id="userLevel">Iniciante</span>
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">
+                                <i class="fas fa-star"></i> Pontos
+                            </span>
+                            <span class="info-value">
+                                <span id="userPoints">0</span>
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">
+                                <i class="fas fa-calendar-check"></i> Atividade
+                            </span>
+                            <span class="info-value">
+                                <span id="userActivity">0 dias</span>
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">
+                                <i class="fas fa-award"></i> Conquistas
+                            </span>
+                            <span class="info-value">
+                                <span id="userAchievements">0/15</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de histórico de leitura -->
+                <div class="reading-history-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-history"></i> Histórico de Leitura
+                    </h2>
+                    <div id="readingHistoryContainer" class="history-list">
+                        <!-- Histórico será carregado aqui -->
                     </div>
                 </div>
 
@@ -497,6 +926,20 @@
                         <!-- Os mangás curtidos serão carregados aqui -->
                     </div>
                 </div>
+
+                <!-- Seção de conquistas -->
+                <div class="achievements-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-trophy"></i> Conquistas
+                    </h2>
+                    <div id="achievementsContainer" class="achievements-grid">
+                        <!-- Conquistas serão carregadas aqui -->
+                    </div>
+                </div>
+
+                <div class="version-footer" id="versionFooter">
+                    MangaTachi v3.0.1 (15) - Sua plataforma de mangás online
+                </div>
             </div>
         </div>
     </main>
@@ -505,6 +948,18 @@
         // Variáveis globais
         const SITE_VERSION = "3.0.1 (15)";
         const DISCORD_SERVER_ID = "1403373682868359238";
+
+        // Conquistas disponíveis
+        const ACHIEVEMENTS = [
+            { id: 1, name: "Primeiros Passos", desc: "Fazer login pela primeira vez", icon: "fa-user", unlocked: true },
+            { id: 2, name: "Leitor Iniciante", desc: "Ler 10 capítulos", icon: "fa-book", unlocked: true },
+            { id: 3, name: "Fã de Mangá", desc: "Curtir 5 mangás", icon: "fa-heart", unlocked: true },
+            { id: 4, name: "Leitor Ávido", desc: "Ler 50 capítulos", icon: "fa-book-reader", unlocked: false },
+            { id: 5, name: "Colecionador", desc: "Curtir 20 mangás", icon: "fa-star", unlocked: false },
+            { id: 6, name: "Maratonista", desc: "Ler 5 capítulos em um dia", icon: "fa-running", unlocked: false },
+            { id: 7, name: "Crítico", desc: "Avaliar 10 mangás", icon: "fa-comment", unlocked: false },
+            { id: 8, name: "Social", desc: "Entrar no servidor do Discord", icon: "fa-users", unlocked: true }
+        ];
 
         function goBack() {
             window.history.back();
@@ -614,15 +1069,54 @@
                 verifiedElement.textContent = 'Não';
             }
 
+            // Carregar badges do usuário
+            loadUserBadges(user, isServerMember);
+            
             // Carregar estatísticas
             await loadUserStats(user.id);
             
             // Carregar mangás curtidos
             await loadLikedMangas(user.id);
             
+            // Carregar histórico de leitura
+            await loadReadingHistory(user.id);
+            
+            // Carregar conquistas
+            loadAchievements(user.id);
+            
             // Atualizar versão
-            document.getElementById('versionFooter').textContent = `VERSÃO DO SITE ${SITE_VERSION}`;
+            document.getElementById('versionFooter').textContent = `MangaTachi v${SITE_VERSION} - Sua plataforma de mangás online`;
         });
+
+        // Carregar badges do usuário
+        function loadUserBadges(user, isServerMember) {
+            const badgesContainer = document.getElementById('profileBadges');
+            let badgesHTML = '';
+            
+            // Badge de verificação
+            if (user.verified) {
+                badgesHTML += `<span class="profile-badge badge-verified"><i class="fas fa-check-circle"></i> Verificado</span>`;
+            }
+            
+            // Badge de servidor
+            if (isServerMember) {
+                badgesHTML += `<span class="profile-badge badge-supporter"><i class="fas fa-users"></i> Comunidade</span>`;
+            }
+            
+            // Badge de membro desde (exemplo)
+            const joinDate = new Date(user.created_at || Date.now());
+            const now = new Date();
+            const diffTime = Math.abs(now - joinDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays > 365) {
+                badgesHTML += `<span class="profile-badge badge-premium"><i class="fas fa-crown"></i> Veterano</span>`;
+            } else if (diffDays > 180) {
+                badgesHTML += `<span class="profile-badge badge-translator"><i class="fas fa-star"></i> Leitor</span>`;
+            }
+            
+            badgesContainer.innerHTML = badgesHTML;
+        }
 
         async function loadUserStats(userId) {
             try {
@@ -631,16 +1125,50 @@
                 document.getElementById('mangasCount').textContent = userLikesCount;
                 document.getElementById('infoLikes').textContent = userLikesCount;
                 
-                // Data de registro (usando data atual como exemplo)
-                const memberSince = new Date().toLocaleDateString('pt-BR');
-                document.getElementById('memberSince').textContent = memberSince;
+                // Estatísticas de exemplo
+                document.getElementById('readingTime').textContent = '12h';
+                document.getElementById('chaptersRead').textContent = '24';
                 
-                // Pedidos enviados (exemplo)
-                document.getElementById('requestsCount').textContent = '2';
+                // Data de registro
+                const userData = localStorage.getItem('discordUser');
+                const user = JSON.parse(userData);
+                const memberSince = new Date(user.created_at || Date.now()).toLocaleDateString('pt-BR');
+                document.getElementById('memberSince').textContent = memberSince;
+                document.getElementById('joinDate').textContent = memberSince;
+                
+                // Atualizar nível e pontos
+                updateUserLevel(userLikesCount);
                 
             } catch (error) {
                 console.error('Erro ao carregar estatísticas:', error);
             }
+        }
+
+        // Atualizar nível do usuário baseado nas curtidas
+        function updateUserLevel(likesCount) {
+            let level = 'Iniciante';
+            let points = likesCount * 10;
+            
+            if (likesCount >= 20) {
+                level = 'Expert';
+                points += 100;
+            } else if (likesCount >= 10) {
+                level = 'Intermediário';
+                points += 50;
+            }
+            
+            document.getElementById('userLevel').textContent = level;
+            document.getElementById('userPoints').textContent = points;
+            
+            // Atividade (dias desde o registro)
+            const userData = localStorage.getItem('discordUser');
+            const user = JSON.parse(userData);
+            const joinDate = new Date(user.created_at || Date.now());
+            const now = new Date();
+            const diffTime = Math.abs(now - joinDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            document.getElementById('userActivity').textContent = `${diffDays} dias`;
         }
 
         async function loadLikedMangas(userId) {
@@ -664,7 +1192,8 @@
                             likedMangas.push({
                                 id: manga.id,
                                 title: manga.title,
-                                coverUrl: manga.coverUrl
+                                coverUrl: manga.coverUrl,
+                                author: manga.author
                             });
                         }
                     }
@@ -686,6 +1215,9 @@
                 
                 likedMangasContainer.innerHTML = displayMangas.map(manga => `
                     <div class="liked-manga-card" onclick="showMangaDetails(${manga.id})">
+                        <div class="liked-manga-meta">
+                            <i class="fas fa-heart"></i>
+                        </div>
                         <img src="${manga.coverUrl}" alt="${manga.title}" class="liked-manga-cover" loading="lazy">
                         <div class="liked-manga-title">${manga.title}</div>
                     </div>
@@ -701,6 +1233,74 @@
                     </div>
                 `;
             }
+        }
+
+        // Carregar histórico de leitura (exemplo)
+        async function loadReadingHistory(userId) {
+            try {
+                const historyContainer = document.getElementById('readingHistoryContainer');
+                
+                // Exemplo de histórico (em um sistema real, isso viria do banco de dados)
+                const sampleHistory = [
+                    { id: 1, title: "One Piece", chapter: "Capítulo 1054", coverUrl: "https://files.catbox.moe/glqtmw.jpg", date: "2 horas atrás", progress: 85 },
+                    { id: 2, title: "Attack on Titan", chapter: "Capítulo 139", coverUrl: "https://files.catbox.moe/glqtmw.jpg", date: "1 dia atrás", progress: 100 },
+                    { id: 3, title: "My Hero Academia", chapter: "Capítulo 362", coverUrl: "https://files.catbox.moe/glqtmw.jpg", date: "3 dias atrás", progress: 45 }
+                ];
+                
+                if (sampleHistory.length === 0) {
+                    historyContainer.innerHTML = `
+                        <div class="no-liked-mangas">
+                            <i class="fas fa-history"></i>
+                            <p>Nenhum histórico de leitura</p>
+                            <p style="font-size: 0.9rem; margin-top: 0.5rem;">Comece a ler alguns mangás para ver seu histórico aqui!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                historyContainer.innerHTML = sampleHistory.map(item => `
+                    <div class="history-item" onclick="showMangaDetails(${item.id})">
+                        <img src="${item.coverUrl}" alt="${item.title}" class="history-cover" loading="lazy">
+                        <div class="history-info">
+                            <div class="history-title">${item.title}</div>
+                            <div class="history-chapter">${item.chapter}</div>
+                            <div class="history-date">${item.date}</div>
+                        </div>
+                        <div class="history-progress">
+                            <div class="progress-bar" style="width: ${item.progress}%"></div>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Erro ao carregar histórico:', error);
+                const historyContainer = document.getElementById('readingHistoryContainer');
+                historyContainer.innerHTML = `
+                    <div class="no-liked-mangas">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Erro ao carregar histórico de leitura</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Carregar conquistas
+        function loadAchievements(userId) {
+            const achievementsContainer = document.getElementById('achievementsContainer');
+            const unlockedCount = ACHIEVEMENTS.filter(a => a.unlocked).length;
+            
+            // Atualizar contador de conquistas
+            document.getElementById('userAchievements').textContent = `${unlockedCount}/${ACHIEVEMENTS.length}`;
+            
+            achievementsContainer.innerHTML = ACHIEVEMENTS.map(achievement => `
+                <div class="achievement-card ${achievement.unlocked ? '' : 'locked'}">
+                    <div class="achievement-icon">
+                        <i class="fas ${achievement.icon}"></i>
+                    </div>
+                    <div class="achievement-name">${achievement.name}</div>
+                    <div class="achievement-desc">${achievement.desc}</div>
+                </div>
+            `).join('');
         }
         
         function showMangaDetails(mangaId) {

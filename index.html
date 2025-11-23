@@ -1,8 +1,9 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MangaTachi - Leitor de Mangás</title>
-    
+    <title>MangaTachi - Leitor de Mangás Online</title>
     
     <!-- Favicon personalizado -->
     <link rel="icon" type="image/png" href="https://files.catbox.moe/0rjf4e.png">
@@ -10,23 +11,23 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3972918146324365"
      crossorigin="anonymous"></script>
     
-    <!-- Meta Tags para SEO e Social Media (serão atualizadas dinamicamente) -->
+    <!-- Meta Tags para SEO e Social Media -->
     <meta name="description" content="Leia mangás online gratuitamente no MangaTachi. Biblioteca com diversos títulos, leitor online e atualizações constantes.">
     <meta name="keywords" content="mangá, Tachi, leitor online, manga, leitura, jukai, gibble room">
     <meta name="author" content="MangaTachi">
     
-    <!-- Open Graph Meta Tags (serão atualizadas dinamicamente) -->
+    <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="MangaTachi - Leitor de Mangás Online">
-    <meta property="og:description" content="Leia mangás online gratuitamente. Biblioteca com diversos títulos e leitor online otimizado.">
+    <meta property="og:description" content="Leia mangás online gratuitamente. Biblioteca com diversos títulos e leitor online.">
     <meta property="og:image" content="https://files.catbox.moe/glqtmw.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:url" content="https://manga-room-scan.vercel.app">
+    <meta property="og:url" content="https://mangatachi.vercel.app/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MangaTachi">
     <meta property="og:locale" content="pt_BR">
     
-    <!-- Twitter Card Meta Tags (serão atualizadas dinamicamente) -->
+    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="MangaTachi - Leitor de Mangás Online">
     <meta name="twitter:description" content="Leia mangás online gratuitamente no MangaTachi. Biblioteca com diversos títulos e leitor online.">
@@ -49,7 +50,7 @@
         <div class="container">
             <div class="header-content">
                 <h1 class="logo">
-                    <i class="fas fa-book"></i> MangaTachi
+                    <i class="fas fa-book-open"></i> MangaTachi
                 </h1>
                 <div class="search-bar">
                     <input type="text" id="searchInput" placeholder="Buscar mangás..." onkeypress="handleSearchKeypress(event)">
@@ -66,13 +67,13 @@
     </header>
     
     <!-- Carrossel de Mangás -->
-<div id="mangaCarousel" class="manga-carousel">
-    <div class="carousel-container">
-        <div class="carousel-track" id="carouselTrack">
-            <!-- Os mangás serão carregados dinamicamente aqui -->
+    <div id="mangaCarousel" class="manga-carousel">
+        <div class="carousel-container">
+            <div class="carousel-track" id="carouselTrack">
+                <!-- Os mangás serão carregados dinamicamente aqui -->
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Conteúdo Principal -->
     <main class="main-content">
@@ -94,61 +95,61 @@
         </div>
     </main>
 
-<!-- Modal de Detalhes do Mangá -->
-<div id="mangaModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <div id="mangaDetails">
-            <!-- Detalhes do mangá serão carregados aqui -->
-            
-            <!-- BOTÃO DE DOWNLOAD ADICIONADO AQUI -->
-            <div class="download-section" id="downloadSection" style="display: none;">
-                <button class="download-btn" onclick="handleDownload()">
-                    <i class="fas fa-download"></i> Baixar Capítulos
-                </button>
+    <!-- Modal de Detalhes do Mangá -->
+    <div id="mangaModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="mangaDetails">
+                <!-- Detalhes do mangá serão carregados aqui -->
+                
+                <!-- BOTÃO DE DOWNLOAD ADICIONADO AQUI -->
+                <div class="download-section" id="downloadSection" style="display: none;">
+                    <button class="download-btn" onclick="handleDownload()">
+                        <i class="fas fa-download"></i> Baixar Capítulos
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Sidebar Modal -->
-<div id="sidebarModal" class="sidebar-modal">
-    <div class="sidebar-content">
-        <div class="sidebar-header">
-            <h2><i class="fas fa-info-circle"></i> Informações</h2>
-            <button class="close-sidebar" onclick="toggleSidebar()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="sidebar-body">
-            <!-- Seção Minha Conta (será dinâmica via JavaScript) -->
-            <div class="sidebar-section" id="accountSection">
-                <h3><i class="fas fa-user"></i> Minha Conta</h3>
-                <button class="sidebar-btn" onclick="loginWithDiscord()">
-                    <i class="fab fa-discord"></i> Entrar com Discord
-                </button>
-                <button class="sidebar-btn" onclick="openRequestForm()">
-                    <i class="fas fa-book-medical"></i> Pedir Tradução
-                </button>
-                <button class="sidebar-btn" onclick="viewProfile()">
-                    <i class="fas fa-id-card"></i> Meu Perfil
+    <!-- Sidebar Modal -->
+    <div id="sidebarModal" class="sidebar-modal">
+        <div class="sidebar-content">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-info-circle"></i> Informações</h2>
+                <button class="close-sidebar" onclick="toggleSidebar()">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
-            
-            <div class="sidebar-section">
-                <h3><i class="fas fa-users"></i> Comunidade</h3>
-                <a href="https://discord.gg/5kFEkZdWzz" target="_blank" class="sidebar-link">
-                    <i class="fab fa-discord"></i> Discord
-                </a>
-            </div>
-            
-            <div class="sidebar-section">
-                <h3><i class="fas fa-info"></i> Sobre</h3>
-                <p>MangaTachi - Seu leitor de mangás online gratuito.</p>
+            <div class="sidebar-body">
+                <!-- Seção Minha Conta (será dinâmica via JavaScript) -->
+                <div class="sidebar-section" id="accountSection">
+                    <h3><i class="fas fa-user"></i> Minha Conta</h3>
+                    <button class="sidebar-btn" onclick="loginWithDiscord()">
+                        <i class="fab fa-discord"></i> Entrar com Discord
+                    </button>
+                    <button class="sidebar-btn" onclick="openRequestForm()">
+                        <i class="fas fa-book-medical"></i> Pedir Tradução
+                    </button>
+                    <button class="sidebar-btn" onclick="viewProfile()">
+                        <i class="fas fa-id-card"></i> Meu Perfil
+                    </button>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-users"></i> Comunidade</h3>
+                    <a href="https://discord.gg/5kFEkZdWzz" target="_blank" class="sidebar-link">
+                        <i class="fab fa-discord"></i> Discord
+                    </a>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-info"></i> Sobre</h3>
+                    <p>MangaTachi - Seu leitor de mangás online gratuito.</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <!-- Modal de Pedido de Tradução -->
     <div id="requestModal" class="modal">
@@ -186,31 +187,31 @@
         </div>
     </div>
     
-<!-- Modal de Download Simples -->
-<div id="downloadModal" class="modal">
-    <div class="modal-content download-modal">
-        <span class="close" onclick="closeDownloadModal()">&times;</span>
-        <h2><i class="fas fa-download"></i> Download Direto</h2>
-        
-        <div class="download-info">
-            <p>O download será iniciado em <span id="countdown">5</span> segundos...</p>
-            <div class="download-timer">
-                <div class="timer-progress"></div>
+    <!-- Modal de Download Simples -->
+    <div id="downloadModal" class="modal">
+        <div class="modal-content download-modal">
+            <span class="close" onclick="closeDownloadModal()">&times;</span>
+            <h2><i class="fas fa-download"></i> Download Direto</h2>
+            
+            <div class="download-info">
+                <p>O download será iniciado em <span id="countdown">5</span> segundos...</p>
+                <div class="download-timer">
+                    <div class="timer-progress"></div>
+                </div>
+            </div>
+            
+            <div class="download-modal-actions">
+                <button type="button" onclick="closeDownloadModal()" class="btn-cancel">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn-download" id="directDownloadBtn" disabled onclick="startDirectDownload()">
+                    <i class="fas fa-download"></i> Iniciar Download
+                </button>
             </div>
         </div>
-        
-        <div class="download-modal-actions">
-            <button type="button" onclick="closeDownloadModal()" class="btn-cancel">
-                <i class="fas fa-times"></i> Cancelar
-            </button>
-            <button class="btn-download" id="directDownloadBtn" disabled onclick="startDirectDownload()">
-                <i class="fas fa-download"></i> Iniciar Download
-            </button>
-        </div>
     </div>
-</div>
 
-    <!-- Leitor de Mangá (MODIFICADO) -->
+    <!-- Leitor de Mangá -->
     <div id="mangaReader" class="manga-reader">
         <div class="reader-header">
             <button onclick="closeReader()" class="btn-back">
@@ -234,7 +235,7 @@
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
-<!-- EmailJS -->
+    <!-- EmailJS -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         // Inicializar EmailJS
@@ -242,8 +243,6 @@
             emailjs.init("6kUTawXyBs60fTVhJ");
         })();
     </script>
-    
-
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
@@ -253,6 +252,5 @@
     <script src="manga.js"></script>
     <script src="downloads.js"></script>
     <script src="script.js"></script>
-    
 </body>
 </html>
