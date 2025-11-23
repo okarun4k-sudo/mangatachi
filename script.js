@@ -865,6 +865,9 @@ document.addEventListener('DOMContentLoaded', function() {
     createFixedBackButton();
     updateFixedBackButton();
     
+    // Inicializar tema
+    initializeTheme();
+    
     // Verificar se estamos em uma rota de obra e processar
     processCurrentRoute();
 });
@@ -2101,3 +2104,81 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.head.insertAdjacentHTML('beforeend', creditStyles);
 });
+
+
+// ===============================
+// SISTEMA DE TEMA CLARO/ESCURO
+// ===============================
+
+// Inicializar tema
+function initializeTheme() {
+    const savedTheme = localStorage.getItem('mangaTheme') || 'light';
+    setTheme(savedTheme);
+    updateThemeButton(savedTheme);
+}
+
+// Alternar tema
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    setTheme(newTheme);
+    updateThemeButton(newTheme);
+    saveTheme(newTheme);
+    showThemeToast(newTheme);
+}
+
+// Aplicar tema
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    
+    // Atualizar meta tag theme-color para mobile
+    const themeColor = theme === 'light' ? '#f5f5f5' : '#000000';
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', themeColor);
+}
+
+// Atualizar botão do tema
+function updateThemeButton(theme) {
+    const themeButton = document.querySelector('.sidebar-btn[onclick="toggleTheme()"]');
+    const themeInfo = document.getElementById('currentTheme');
+    
+    if (themeButton && themeInfo) {
+        if (theme === 'light') {
+            themeButton.innerHTML = '<i class="fas fa-moon theme-icon"></i> Alternar para Escuro';
+            themeInfo.textContent = 'Tema atual: Claro';
+        } else {
+            themeButton.innerHTML = '<i class="fas fa-sun theme-icon"></i> Alternar para Claro';
+            themeInfo.textContent = 'Tema atual: Escuro';
+        }
+    }
+}
+
+// Salvar tema no localStorage
+function saveTheme(theme) {
+    localStorage.setItem('mangaTheme', theme);
+}
+
+// Mostrar toast de confirmação do tema
+function showThemeToast(theme) {
+    const themeName = theme === 'light' ? 'Claro' : 'Escuro';
+    showToast(`<i class="fas fa-palette"></i> Tema ${themeName} ativado`);
+}
+
+// Atualizar a função initializeAuth para incluir o tema
+function initializeAuth() {
+    console.log('Inicializando autenticação...');
+    
+    const userData = localStorage.getItem('discordUser');
+    const user = userData ? JSON.parse(userData) : null;
+    
+    if (user) {
+        console.log('Usuário encontrado no localStorage:', user.username);
+        updateUIForLoggedUser(user);
+    } else {
+        console.log('Nenhum usuário logado');
+        showLoginSection();
+    }
+    
+    // Inicializar tema
+    initializeTheme();
+}

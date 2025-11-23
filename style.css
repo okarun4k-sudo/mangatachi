@@ -5,7 +5,33 @@
     box-sizing: border-box;
 }
 
-:root {
+/* ===== SISTEMA DE TEMA CLARO/ESCURO ===== */
+:root[data-theme="light"] {
+    --primary-color: #1e88e5;
+    --secondary-color: #42a5f5;
+    --accent-color: #64b5f6;
+    --background-dark: #ffffff;
+    --background-card: #f8f9fa;
+    --background-hover: #e9ecef;
+    --text-light: #212529;
+    --text-gray: #6c757d;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1);
+    --border-color: #dee2e6;
+    
+    --status-ongoing: #28a745;
+    --status-complete: #6f42c1;
+    --status-ongoing-bg: rgba(40, 167, 69, 0.1);
+    --status-complete-bg: rgba(111, 66, 193, 0.1);
+    --status-ongoing-border: rgba(40, 167, 69, 0.3);
+    --status-complete-border: rgba(111, 66, 193, 0.3);
+    
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --blur-background: rgba(255, 255, 255, 0.9);
+    --gradient-dark: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,249,250,0.7) 100%);
+    --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+:root[data-theme="dark"] {
     --primary-color: #1e88e5;
     --secondary-color: #42a5f5;
     --accent-color: #64b5f6;
@@ -15,9 +41,7 @@
     --text-light: #ffffff;
     --text-gray: #b0b0b0;
     --shadow: 0 1px 3px rgba(0,0,0,0.9);
-    --border-radius: 8px;
     --border-color: #111111;
-    --border-radius-pill: 50px;
     
     --status-ongoing: #4caf50;
     --status-complete: #9c27b0;
@@ -26,11 +50,15 @@
     --status-ongoing-border: rgba(76, 175, 80, 0.4);
     --status-complete-border: rgba(156, 39, 176, 0.4);
     
-    /* Novas variáveis para o design moderno */
     --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     --blur-background: rgba(10, 10, 10, 0.8);
     --gradient-dark: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(20,20,20,0.7) 100%);
     --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+/* Aplica o tema claro por padrão */
+:root {
+    data-theme: light;
 }
 
 body {
@@ -39,6 +67,7 @@ body {
     color: var(--text-light);
     line-height: 1.5;
     padding-bottom: env(safe-area-inset-bottom);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container {
@@ -49,14 +78,19 @@ body {
 
 /* ===== NAVBAR MODERNA ===== */
 .header {
-    background: rgba(10, 10, 10, 0.8);
+    background: rgba(255, 255, 255, 0.95);
     padding: 0.5rem 0;
     position: sticky;
     top: 0;
     z-index: 100;
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+}
+
+:root[data-theme="dark"] .header {
+    background: rgba(10, 10, 10, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .header-content {
@@ -90,11 +124,11 @@ body {
 
 .search-bar input {
     padding: 10px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius-pill);
     flex: 1;
     font-size: 1rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--background-card);
     color: var(--text-light);
     transition: all 0.3s ease;
 }
@@ -103,11 +137,11 @@ body {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(45, 90, 160, 0.3);
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--background-hover);
 }
 
 .search-bar input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--text-gray);
 }
 
 .search-btn {
@@ -129,7 +163,7 @@ body {
 .hamburger-btn {
     background: transparent;
     color: var(--text-light);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     padding: 8px;
     border-radius: var(--border-radius);
     cursor: pointer;
@@ -143,7 +177,7 @@ body {
 }
 
 .hamburger-btn:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--background-hover);
     transform: scale(1.1);
 }
 
@@ -170,14 +204,15 @@ body {
 }
 
 .section-card {
-    background: var(--blur-background);
+    background: var(--background-card);
     border-radius: var(--border-radius);
     padding: 1.5rem;
     box-shadow: var(--card-shadow);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
     backdrop-filter: blur(10px);
     position: relative;
     z-index: 1;
+    transition: all 0.3s ease;
 }
 
 .section-header {
@@ -185,7 +220,7 @@ body {
     align-items: center;
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--border-color);
     flex-wrap: wrap;
     gap: 1rem;
 }
@@ -201,7 +236,7 @@ body {
 
 /* ===== BOTÃO VOLTAR MODERNO ===== */
 .btn-back {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--background-hover);
     color: var(--text-light);
     border: none;
     padding: 0.6rem 1.2rem;
@@ -218,7 +253,8 @@ body {
 }
 
 .btn-back:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--primary-color);
+    color: white;
     transform: translateX(-3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -248,7 +284,7 @@ body {
     object-fit: cover;
     border-radius: 12px;
     box-shadow: var(--card-shadow);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     transition: transform 0.3s ease;
 }
 
@@ -258,12 +294,13 @@ body {
 
 /* ===== INFORMAÇÕES DO MANGÁ ===== */
 .manga-detail-info {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--background-hover);
     padding: 1.5rem;
     border-radius: var(--border-radius);
     box-shadow: var(--card-shadow);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
     backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
 }
 
 .manga-detail-title {
@@ -283,7 +320,7 @@ body {
     align-items: center;
     gap: 0.8rem;
     padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .meta-item:last-child {
@@ -324,7 +361,7 @@ body {
     border-radius: var(--border-radius-pill);
     font-size: 0.75rem;
     font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
 }
@@ -337,10 +374,11 @@ body {
 /* ===== SEÇÃO SINOPSE ===== */
 .manga-description {
     margin-top: 1.5rem;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--background-hover);
     padding: 1.5rem;
     border-radius: var(--border-radius);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
 }
 
 .manga-description h3 {
@@ -386,10 +424,10 @@ body {
 
 /* ===== CARDS DE CAPÍTULO MODERNOS ===== */
 .chapter-card-spa {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--background-hover);
     padding: 1.2rem;
     border-radius: var(--border-radius);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
@@ -413,7 +451,7 @@ body {
 }
 
 .chapter-card-spa:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--background-card);
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
@@ -598,6 +636,7 @@ body {
     flex-direction: column;
     height: 100%;
     border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
 }
 
 .manga-card:hover {
@@ -658,16 +697,15 @@ body {
 }
 
 .status-ongoing {
-    background-color: rgba(156, 39, 176, 0.2) !important;
-    color: #9c27b0 !important;
-    border: 1px solid rgba(156, 39, 176, 0.4) !important;
+    background-color: var(--status-ongoing-bg) !important;
+    color: var(--status-ongoing) !important;
+    border: 1px solid var(--status-ongoing-border) !important;
 }
 
 .status-complete {
-    background-color: rgba(0, 230, 118, 0.25) !important;
-    color: #00ff88 !important;
-    border: 1px solid #00ff88 !important;
-    text-shadow: 0 0 5px rgba(0, 255, 136, 0.3) !important;
+    background-color: var(--status-complete-bg) !important;
+    color: var(--status-complete) !important;
+    border: 1px solid var(--status-complete-border) !important;
 }
 
 .modal {
@@ -694,6 +732,7 @@ body {
     position: relative;
     border: 1px solid var(--border-color);
     box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+    transition: all 0.3s ease;
 }
 
 .close {
@@ -741,12 +780,13 @@ body {
     right: -400px;
     width: 350px;
     height: 100%;
-    background: #0a0a0a;
+    background: var(--background-card);
     z-index: 1500;
     transition: right 0.3s ease;
     box-shadow: -2px 0 10px rgba(0,0,0,0.8);
-    border-left: 1px solid #111111;
-    color: #ffffff;
+    border-left: 1px solid var(--border-color);
+    color: var(--text-light);
+    transition: all 0.3s ease;
 }
 
 .sidebar-modal.open {
@@ -761,16 +801,17 @@ body {
 }
 
 .sidebar-header {
-    background: #1a1a1a;
+    background: var(--background-hover);
     padding: 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #111111;
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
 }
 
 .sidebar-header h2 {
-    color: #ffffff;
+    color: var(--text-light);
     margin: 0;
     font-size: 1.3rem;
     display: flex;
@@ -781,7 +822,7 @@ body {
 .close-sidebar {
     background: none;
     border: none;
-    color: #ffffff;
+    color: var(--text-light);
     font-size: 1.5rem;
     cursor: pointer;
     padding: 5px;
@@ -790,7 +831,7 @@ body {
 }
 
 .close-sidebar:hover {
-    background: #111111;
+    background: var(--background-hover);
     transform: scale(1.1);
 }
 
@@ -798,7 +839,8 @@ body {
     flex: 1;
     padding: 1.5rem;
     overflow-y: auto;
-    background: #0a0a0a;
+    background: var(--background-card);
+    transition: all 0.3s ease;
 }
 
 .sidebar-section {
@@ -806,14 +848,15 @@ body {
 }
 
 .sidebar-section h3 {
-    color: #ffffff;
+    color: var(--text-light);
     margin-bottom: 1rem;
     font-size: 1.1rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    border-bottom: 1px solid #111111;
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 0.5rem;
+    transition: all 0.3s ease;
 }
 
 .sidebar-link {
@@ -821,18 +864,18 @@ body {
     align-items: center;
     gap: 0.8rem;
     padding: 0.8rem 1rem;
-    background: #1a1a1a;
-    color: #ffffff;
+    background: var(--background-hover);
+    color: var(--text-light);
     text-decoration: none;
     border-radius: var(--border-radius);
     transition: all 0.3s ease;
     margin-bottom: 0.5rem;
-    border: 1px solid #111111;
+    border: 1px solid var(--border-color);
     border-left: 3px solid var(--primary-color);
 }
 
 .sidebar-link:hover {
-    background: #2a2a2a;
+    background: var(--background-card);
     transform: none;
     border-left-color: var(--secondary-color);
 }
@@ -842,9 +885,9 @@ body {
     align-items: center;
     gap: 0.8rem;
     padding: 0.8rem 1rem;
-    background: #1a1a1a;
-    color: #ffffff;
-    border: 1px solid #111111;
+    background: var(--background-hover);
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     cursor: pointer;
     transition: all 0.3s ease;
@@ -854,7 +897,7 @@ body {
 }
 
 .sidebar-btn:hover {
-    background: #2a2a2a;
+    background: var(--background-card);
     transform: none;
     border-left-color: var(--accent-color);
 }
@@ -1008,13 +1051,14 @@ body.sidebar-open {
 /* ===== MODAL DE PEDIDO DE TRADUÇÃO MELHORADO ===== */
 .request-modal {
     max-width: 500px;
-    background: linear-gradient(135deg, rgba(15, 15, 15, 0.95) 0%, rgba(25, 25, 25, 0.98) 100%);
+    background: var(--background-card);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
     border-radius: 16px;
     overflow: hidden;
     position: relative;
+    transition: all 0.3s ease;
 }
 
 .request-modal::before {
@@ -1037,7 +1081,7 @@ body.sidebar-open {
     align-items: center;
     gap: 0.75rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--border-color);
     position: relative;
 }
 
@@ -1083,8 +1127,8 @@ body.sidebar-open {
 
 .form-group input {
     padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: var(--background-hover);
+    border: 2px solid var(--border-color);
     border-radius: 10px;
     color: var(--text-light);
     font-size: 0.95rem;
@@ -1095,13 +1139,13 @@ body.sidebar-open {
 .form-group input:focus {
     outline: none;
     border-color: var(--primary-color);
-    background: rgba(255, 255, 255, 0.12);
+    background: var(--background-card);
     box-shadow: 0 0 0 3px rgba(45, 90, 160, 0.2);
     transform: translateY(-1px);
 }
 
 .form-group input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--text-gray);
     font-size: 0.9rem;
 }
 
@@ -1114,15 +1158,15 @@ body.sidebar-open {
     gap: 1rem;
     margin-top: 0.5rem;
     padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--border-color);
 }
 
 .btn-cancel {
     flex: 1;
     padding: 12px 24px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--background-hover);
     color: var(--text-light);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--border-color);
     border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
@@ -1135,8 +1179,8 @@ body.sidebar-open {
 }
 
 .btn-cancel:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: var(--background-card);
+    border-color: var(--primary-color);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
@@ -1185,8 +1229,8 @@ body.sidebar-open {
 }
 
 .btn-submit:disabled {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.5);
+    background: var(--background-hover);
+    color: var(--text-gray);
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -1198,8 +1242,8 @@ body.sidebar-open {
 
 /* Estados de loading */
 .request-form.loading .btn-submit {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.5);
+    background: var(--background-hover);
+    color: var(--text-gray);
     cursor: not-allowed;
 }
 
@@ -1311,15 +1355,16 @@ body.sidebar-open {
 .like-section {
     margin: 1.5rem 0;
     padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--background-hover);
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     text-align: center;
+    transition: all 0.3s ease;
 }
 
 .like-btn.youtube-style {
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: var(--background-hover);
+    border: 2px solid var(--border-color);
     color: var(--text-light);
     padding: 0.5rem 1rem;
     border-radius: 20px;
@@ -1335,7 +1380,7 @@ body.sidebar-open {
 }
 
 .like-btn.youtube-style:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--background-card);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
@@ -1364,7 +1409,7 @@ body.sidebar-open {
 }
 
 .like-count {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--background-card);
     padding: 0.2rem 0.6rem;
     border-radius: 12px;
     font-size: 0.8rem;
@@ -1377,7 +1422,7 @@ body.sidebar-open {
 }
 
 .like-info small {
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-gray);
     font-size: 0.8rem;
 }
 
@@ -1398,10 +1443,11 @@ body.sidebar-open {
 .ad-container {
     margin: 1.5rem 0;
     padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--background-hover);
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     text-align: center;
+    transition: all 0.3s ease;
 }
 
 .ad-label {
@@ -1413,10 +1459,11 @@ body.sidebar-open {
 }
 
 .ad-content {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--background-card);
     padding: 1rem;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
 }
 
 /* Anúncio responsivo */
@@ -1427,7 +1474,7 @@ body.sidebar-open {
     background: linear-gradient(135deg, rgba(45, 90, 160, 0.1), rgba(66, 165, 245, 0.05));
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
 }
 
 .ad-responsive iframe {
@@ -1482,13 +1529,14 @@ body.sidebar-open {
 }
 
 .genre-tag-small {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--background-hover);
     color: var(--text-light);
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
     font-size: 0.65rem;
     font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
 }
 
 .user-profile {
@@ -1522,8 +1570,6 @@ body.sidebar-open {
     font-size: 0.8rem;
     font-style: italic;
 }
-
-
 
 /* ===== BOTÃO VOLTAR AO TOPO DO LEITOR ===== */
 .back-to-top-reader {
@@ -1575,13 +1621,14 @@ body.sidebar-open {
 
 /* ===== CARROSSEL DE MANGÁS ===== */
 .manga-carousel {
-    background: linear-gradient(135deg, rgba(10, 10, 10, 0.9), rgba(20, 20, 20, 0.8));
+    background: var(--background-card);
     padding: 2rem 0;
     margin: 1rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
     overflow: hidden;
     position: relative;
+    transition: all 0.3s ease;
 }
 
 .carousel-container {
@@ -1609,7 +1656,7 @@ body.sidebar-open {
     border-radius: var(--border-radius);
     overflow: hidden;
     box-shadow: var(--card-shadow);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     transition: all 0.3s ease;
     cursor: pointer;
 }
@@ -1691,13 +1738,14 @@ body.sidebar-open {
 /* ===== MODAL DE PEDIDO DE REMOÇÃO ===== */
 .removal-modal {
     max-width: 600px;
-    background: linear-gradient(135deg, rgba(15, 15, 15, 0.95) 0%, rgba(25, 25, 25, 0.98) 100%);
+    background: var(--background-card);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
     border-radius: 16px;
     overflow: hidden;
     position: relative;
+    transition: all 0.3s ease;
 }
 
 .removal-modal::before {
@@ -1720,7 +1768,7 @@ body.sidebar-open {
     align-items: center;
     gap: 0.75rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--border-color);
     position: relative;
 }
 
@@ -1738,32 +1786,36 @@ body.sidebar-open {
 /* Estilos específicos para formulário de remoção */
 .form-group select {
     padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: var(--background-hover);
+    border: 2px solid var(--border-color);
     border-radius: 10px;
     color: var(--text-light);
     font-size: 0.95rem;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b0b0b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 12px center;
     background-size: 16px;
 }
 
+:root[data-theme="dark"] .form-group select {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b0b0b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
 .form-group select:focus {
     outline: none;
     border-color: #dc3545;
-    background: rgba(255, 255, 255, 0.12);
+    background: var(--background-card);
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
     transform: translateY(-1px);
 }
 
 .form-group textarea {
     padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: var(--background-hover);
+    border: 2px solid var(--border-color);
     border-radius: 10px;
     color: var(--text-light);
     font-size: 0.95rem;
@@ -1777,13 +1829,13 @@ body.sidebar-open {
 .form-group textarea:focus {
     outline: none;
     border-color: #dc3545;
-    background: rgba(255, 255, 255, 0.12);
+    background: var(--background-card);
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
     transform: translateY(-1px);
 }
 
 .form-group textarea::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--text-gray);
     font-size: 0.9rem;
 }
 
@@ -1823,8 +1875,8 @@ body.sidebar-open {
 
 /* Estados de loading para remoção */
 .removal-form.loading .btn-removal {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.5);
+    background: var(--background-hover);
+    color: var(--text-gray);
     cursor: not-allowed;
 }
 
@@ -1858,8 +1910,6 @@ body.sidebar-open {
         margin-bottom: 1.25rem;
     }
 }
-
-
 
 /* Transição suave para o carrossel */
 .manga-carousel {
@@ -1921,10 +1971,10 @@ body.sidebar-open {
         gap: 0.8rem;
         position: sticky;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(15, 15, 15, 0.95) 0%, rgba(25, 25, 25, 0.98) 100%);
+        background: var(--background-card);
         padding: 1rem;
         margin: 0 -1.5rem -1.5rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid var(--border-color);
     }
 }
 
@@ -1934,7 +1984,7 @@ body.sidebar-open {
 }
 
 .removal-modal .modal-content::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--background-hover);
     border-radius: 3px;
 }
 
@@ -1964,6 +2014,7 @@ body.sidebar-open {
     border-radius: 12px;
     border: 2px solid rgba(30, 136, 229, 0.3);
     text-align: center;
+    transition: all 0.3s ease;
 }
 
 .download-btn {
@@ -2029,14 +2080,15 @@ body.sidebar-open {
 /* ===== MODAL DE DOWNLOAD PROFISSIONAL ===== */
 .download-modal {
     max-width: 420px;
-    background: linear-gradient(135deg, rgba(15, 15, 15, 0.98) 0%, rgba(25, 25, 25, 0.95) 100%);
+    background: var(--background-card);
     backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--border-color);
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
     border-radius: 20px;
     overflow: hidden;
     position: relative;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    transition: all 0.3s ease;
 }
 
 .download-modal::before {
@@ -2123,7 +2175,7 @@ body.sidebar-open {
 .download-timer {
     width: 100%;
     height: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--background-hover);
     border-radius: 10px;
     overflow: hidden;
     position: relative;
@@ -2153,15 +2205,16 @@ body.sidebar-open {
     display: flex;
     gap: 1rem;
     padding: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid var(--border-color);
+    background: var(--background-hover);
+    transition: all 0.3s ease;
 }
 
 .download-modal-actions .btn-cancel {
     flex: 1;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--background-hover);
     color: var(--text-light);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--border-color);
     padding: 12px 24px;
     border-radius: 10px;
     cursor: pointer;
@@ -2175,8 +2228,8 @@ body.sidebar-open {
 }
 
 .download-modal-actions .btn-cancel:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: var(--background-card);
+    border-color: var(--primary-color);
     transform: translateY(-2px);
 }
 
@@ -2221,8 +2274,8 @@ body.sidebar-open {
 }
 
 .download-modal-actions .btn-download:disabled {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.5);
+    background: var(--background-hover);
+    color: var(--text-gray);
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -2261,7 +2314,7 @@ body.sidebar-open {
 .download-spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
+    border: 3px solid var(--background-hover);
     border-top: 3px solid var(--primary-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -2389,7 +2442,6 @@ body.sidebar-open {
     display: none !important;
 }
 
-
 /* Impedir que clicks no overlay fechem o modal de download */
 .download-modal {
     pointer-events: auto;
@@ -2402,7 +2454,6 @@ body.sidebar-open {
 .modal[style*="display: block"] .download-modal {
     pointer-events: auto;
 }
-
 
 /* ===== BLOQUEIO DE CLICKS NO MODAL DE DOWNLOAD ===== */
 .modal-download-open {
@@ -2423,9 +2474,9 @@ body.sidebar-open {
 /* Modal de download mais bonito */
 .download-modal {
     max-width: 450px;
-    background: linear-gradient(135deg, rgba(15, 15, 15, 0.98) 0%, rgba(25, 25, 25, 0.95) 100%);
+    background: var(--background-card);
     backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--border-color);
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
     border-radius: 20px;
     overflow: hidden;
@@ -2516,7 +2567,7 @@ body.sidebar-open {
 .download-timer {
     width: 100%;
     height: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--background-hover);
     border-radius: 10px;
     overflow: hidden;
     position: relative;
@@ -2546,10 +2597,11 @@ body.sidebar-open {
 .download-ad-container {
     margin: 1rem 0;
     padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--background-hover);
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     display: none;
+    transition: all 0.3s ease;
 }
 
 .download-ad-content {
@@ -2565,11 +2617,12 @@ body.sidebar-open {
 }
 
 .ad-banner {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--background-card);
     padding: 1rem;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
     margin: 0.5rem 0;
+    transition: all 0.3s ease;
 }
 
 .ad-support-text {
@@ -2583,15 +2636,15 @@ body.sidebar-open {
     display: flex;
     gap: 1rem;
     padding: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid var(--border-color);
+    background: var(--background-hover);
 }
 
 .download-modal-actions .btn-cancel {
     flex: 1;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--background-hover);
     color: var(--text-light);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--border-color);
     padding: 12px 24px;
     border-radius: 10px;
     cursor: pointer;
@@ -2605,8 +2658,8 @@ body.sidebar-open {
 }
 
 .download-modal-actions .btn-cancel:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: var(--background-card);
+    border-color: var(--primary-color);
     transform: translateY(-2px);
 }
 
@@ -2651,8 +2704,8 @@ body.sidebar-open {
 }
 
 .download-modal-actions .btn-download:disabled {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.5);
+    background: var(--background-hover);
+    color: var(--text-gray);
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -2709,8 +2762,6 @@ body.sidebar-open {
     }
 }
 
-
-
 /* Otimizações de performance CSS */
 .lazy {
     opacity: 0;
@@ -2753,9 +2804,9 @@ body.sidebar-open {
     position: fixed;
     top: 20px;
     left: 20px;
-    background: rgba(10, 10, 10, 0.9);
+    background: var(--background-card);
     color: var(--text-light);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--border-color);
     padding: 10px 16px;
     border-radius: var(--border-radius-pill);
     cursor: pointer;
@@ -2772,7 +2823,8 @@ body.sidebar-open {
 }
 
 .fixed-back-btn:hover {
-    background: rgba(30, 136, 229, 0.9);
+    background: var(--primary-color);
+    color: white;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(30, 136, 229, 0.4);
     border-color: var(--primary-color);
@@ -2807,4 +2859,151 @@ body.sidebar-open .fixed-back-btn {
         left: 10px;
         padding: 6px 12px;
     }
+}
+
+/* ===== ESTILOS PARA O SISTEMA DE TEMA ===== */
+.theme-info {
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+.theme-info small {
+    color: var(--text-gray);
+    font-size: 0.75rem;
+}
+
+/* Botão de tema com ícone dinâmico */
+.sidebar-btn .theme-icon {
+    transition: transform 0.3s ease;
+}
+
+:root[data-theme="dark"] .sidebar-btn .fa-moon {
+    transform: rotate(180deg);
+}
+
+/* Transição suave para mudanças de tema */
+body, .header, .section-card, .manga-card, .modal-content, .sidebar-modal {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Ajustes específicos para o tema claro */
+:root[data-theme="light"] .header {
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .search-bar input {
+    background: var(--background-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+}
+
+:root[data-theme="light"] .search-bar input::placeholder {
+    color: var(--text-gray);
+}
+
+:root[data-theme="light"] .hamburger-btn {
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+}
+
+:root[data-theme="light"] .sidebar-modal {
+    background: var(--background-card);
+    border-left: 1px solid var(--border-color);
+    color: var(--text-light);
+}
+
+:root[data-theme="light"] .sidebar-header {
+    background: var(--background-hover);
+    border-bottom: 1px solid var(--border-color);
+}
+
+:root[data-theme="light"] .sidebar-link,
+:root[data-theme="light"] .sidebar-btn {
+    background: var(--background-hover);
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+}
+
+:root[data-theme="light"] .sidebar-link:hover,
+:root[data-theme="light"] .sidebar-btn:hover {
+    background: var(--background-card);
+}
+
+:root[data-theme="light"] .manga-carousel {
+    background: var(--background-card);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+:root[data-theme="light"] .fixed-back-btn {
+    background: var(--background-card);
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+}
+
+:root[data-theme="light"] .back-to-top-reader {
+    background: rgba(30, 136, 229, 0.9);
+}
+
+/* ===== ESTILOS PARA OS CRÉDITOS (ADICIONADOS DINAMICAMENTE) ===== */
+.credit-notice {
+    background: linear-gradient(135deg, rgba(30, 136, 229, 0.1), rgba(66, 165, 245, 0.05));
+    border: 1px solid rgba(30, 136, 229, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.credit-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+    color: var(--primary-color);
+}
+
+.credit-header h4 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.credit-content p {
+    margin: 0.3rem 0;
+    line-height: 1.4;
+}
+
+.credit-content .disclaimer {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border-color);
+    font-style: italic;
+    color: var(--text-gray);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.credit-content a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.credit-content a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .credit-notice {
+        margin: 1rem 0;
+        padding: 0.8rem;
+    }
+}
+
+/* Variáveis de borda e raio */
+:root {
+    --border-radius: 8px;
+    --border-radius-pill: 50px;
 }
