@@ -39,7 +39,7 @@ const DOWNLOAD_WAIT_TIME = 15;
 
 // Configurações do Discord OAuth
 const DISCORD_CLIENT_ID = "1437114497050345613";
-const DISCORD_REDIRECT_URI = "https://mangaroom-scan.vercel.app/auth.html";
+const DISCORD_REDIRECT_URI = "https://mangatachi.vercel.app/auth.html";
 const DISCORD_SCOPE = "identify email";
 
 // ===============================
@@ -1011,7 +1011,7 @@ function loginWithDiscord() {
     console.log('Iniciando login com Discord...');
     
     // URL CORRETA - sem hash routing para OAuth
-    const DISCORD_REDIRECT_URI = "https://mangaroom-scan.vercel.app/auth.html";
+    const DISCORD_REDIRECT_URI = "https://mangatachi.vercel.app/auth.html";
     const DISCORD_CLIENT_ID = "1437114497050345613";
     const DISCORD_SCOPE = "identify email";
     
