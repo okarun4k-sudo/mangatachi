@@ -993,7 +993,150 @@ const mangas = [
         }
     ]
 },
+{
+    "id": 18,
+    "title": "Watashi no Te ga Suki na Hito",
+    "description": "Uma história doce e sensível sobre duas garotas que descobrem uma conexão especial através do toque. Enquanto uma delas possui uma apreciação única pelas mãos da outra, elas exploram sentimentos nascentes e a intimidade que surge entre elas. Um one-shot yuri que captura momentos delicados de descoberta romântica e a beleza dos pequenos gestos no amor.",
+    "author": "2C = Em abundância",
+    "genres": ["Amor entre Garotas", "Romance", "Doujinshi", "One Shot"],
+    "translationTeam": "MangaRoom",
+    "status": "Finalizado",
+    "coverUrl": "https://files.catbox.moe/o26e0o.jpeg",
+    "chapters": [
+        {
+            "chapterNumber": 1,
+            "title": "One Shot",
+            "pages": [
+                "https://files.catbox.moe/57d2d1.png",    // M1.png - Página 1
+                "https://files.catbox.moe/1r368a.jpeg",   // M2.jpeg - Página 2
+                "https://files.catbox.moe/z3ouye.jpeg",   // M3.jpeg - Página 3
+                "https://files.catbox.moe/h00pph.png",    // M4.png - Página 4
+                "https://files.catbox.moe/trwe8m.png",    // M5.png - Página 5
+                "https://files.catbox.moe/tlfafu.png",    // M6.png - Página 6
+                "https://files.catbox.moe/8u3xtm.png",    // M7.png - Página 7
+                "https://files.catbox.moe/le6bu7.png",    // M8.png - Página 8
+                "https://files.catbox.moe/duu36k.png",    // M9.png - Página 9
+                "https://files.catbox.moe/pibi8s.png",    // M10.png - Página 10
+                "https://files.catbox.moe/rv54lv.jpeg",   // M11.jpeg - Página 11
+                "https://files.catbox.moe/ehoq3g.png",    // M12.png - Página 12
+                "https://files.catbox.moe/bu0hpf.png",    // M13.png - Página 13
+                "https://files.catbox.moe/cq6paw.png",    // M14.png - Página 14
+                "https://files.catbox.moe/ck0ric.png",    // M15.png - Página 15
+                "https://files.catbox.moe/jqt99m.png",    // M16.png - Página 16
+                "https://files.catbox.moe/7bn6iy.png",    // M17.png - Página 17
+                "https://files.catbox.moe/wo0m03.jpeg"    // M18.jpeg - Página 18
+            ],
+            "type": "chapter"
+        }
+    ]
+},
+{
+    id: 16,
+    title: "Bunny Day",
+    description: "Descrição indisponível",
+    author: "Namise Rabi",
+    genres: ["Troca de Gênero", "One Shot"],
+    translationTeam: "MangaTachi",
+    status: "Finalizado",
+    coverUrl: "https://files.catbox.moe/hbh6wk.jpg",
+    chapters: [
+        {
+            chapterNumber: 1,
+            title: "One Shot",
+            pages: [
+                "https://files.catbox.moe/0430yg.png",
+                "https://files.catbox.moe/15o4ib.png"
+                ],
+            type: "chapter"
+        }
+    ]
+},
+{
+    id: 15,
+    title: "MOTO EIYU WA DAITOKAI SAIKYOU NO BENRIYA-SAN: MOTO SEIJO NO BUNNY GIRL TO TOMO NI ARAYURU TROUBLE KAIKETSU ITASHIMASU",
+    description: "Geor Richter, a former member of the Demon Lord Subjugation Party, starts a sort of 'jack-of-all-trades' business in the massive magic fortress-city known as Heaven's Door. When he casually stops by the tavern Cabaret Miranda, he finds— for some reason—his former party member, the saint Tiarika, working there in a bunny-girl outfit. By an unexpected twist of fate, the two team up once again to solve various incidents occurring throughout the city! A thrilling battle fantasy filled with laughter, tears, and explosive fun begins now!",
+    author: "Desconhecido",
+    genres: ["Ação", "Fantasia", "Aventura", "Comédia", "Sobrenatural", "Slice of Life"],
+    translationTeam: "MangaTachi",
+    status: "Incompleto",
+    coverUrl: "https://files.catbox.moe/w97vs2.jpg",
+    chapters: [
+        {
+            chapterNumber: 1,
+            title: "Capítulo 1",
+            pages: [],
+            type: "chapter"
+        }
+    ]
+},
 
+{
+    "id": 19,
+    "title": "Hakai Kami-sama e no Mitsugimono",
+    "description": "Uma história curta e divertida sobre um encontro inesperado com uma divindade da destruição. O protagonista acaba se tornando uma oferenda para o deus da destruição, mas o que se segue é uma série de situações cômicas e surpreendentes. Um one-shot que mistura elementos sobrenaturais com humor, explorando a dinâmica peculiar entre um humano comum e um deus todo-poderoso.",
+    "author": "Medatarou",
+    "genres": ["Comédia", "One-shot", "Webcomic"],
+    "translationTeam": "MangaRoom",
+    "status": "Finalizado",
+    "coverUrl": "https://files.catbox.moe/yvoe7c.jpg",
+    "chapters": [
+        {
+            "chapterNumber": 1,
+            "title": "One Shot",
+            "pages": [
+                 "https://files.catbox.moe/e6ea1e.png",
+                 "https://files.catbox.moe/2ibc93.png"
+                ],
+            "type": "chapter"
+        }
+    ]
+},
+{
+    "id": 20,
+    "title": "An Area Known for Real Demon Sightings During Setsubun",
+    "description": "Uma história sobrenatural que se passa durante o Setsubun, o tradicional festival japonês para afastar demônios e trazer boa sorte. Em uma área conhecida por avistamentos reais de demônios durante esta época do ano, os personagens se envolvem em eventos misteriosos e assustadores. O one-shot explora o folclore japonês e o limiar entre o mundo humano e o espiritual, onde rituais antigos e entidades sobrenaturais se encontram de maneira inesperada.",
+    "author": "Pageratta",
+    "genres": ["Demons", "Supernatural", "Oneshot", "Web Comic"],
+    "translationTeam": "MangaRoom", 
+    "status": "Finalizado",
+    "coverUrl": "https://files.catbox.moe/h90flo.jpg",
+    "chapters": [
+        {
+            "chapterNumber": 1,
+            "title": "One Shot",
+            "pages": [
+                 "https://files.catbox.moe/3shwz1.png",
+                 "https://files.catbox.moe/gl2awr.png",
+                 "https://files.catbox.moe/sv86vn.png",
+                 "https://files.catbox.moe/t2p5ns.png"
+                ],
+            "type": "chapter"
+        }
+    ]
+},
+
+ {
+    id: 17,
+    title: "The Boy Forced to Crossdress by His Manga Club Senpai",
+    description: "Descrição indisponível",
+    author: "Yuuki Oto",
+    genres: ["Crossdressing", "School Life", "One Shot"],
+    translationTeam: "MangaTachi",
+    status: "Finalizado",
+    coverUrl: "https://files.catbox.moe/rcy52i.png",
+    chapters: [
+        {
+            chapterNumber: 1,
+            title: "One Shot",
+            pages: [
+                "https://files.catbox.moe/7b9qpm.png",
+                "https://files.catbox.moe/x11ltt.png",
+                "https://files.catbox.moe/4dmpxp.png"
+                ],
+            type: "chapter"
+        }
+    ]
+},
     
 {
     id: 9,

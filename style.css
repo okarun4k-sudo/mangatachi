@@ -3007,3 +3007,50 @@ body, .header, .section-card, .manga-card, .modal-content, .sidebar-modal {
     --border-radius: 8px;
     --border-radius-pill: 50px;
 }
+
+/* ===== MELHORIAS PARA O SISTEMA DE BUSCA ===== */
+.search-bar {
+    position: relative;
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    max-width: 400px;
+}
+
+/* Ajustes para mobile */
+@media (max-width: 768px) {
+    .search-bar {
+        max-width: 100%;
+        position: static;
+    }
+    
+    .search-results-container {
+        position: fixed !important;
+        top: 70px !important;
+        left: 16px !important;
+        right: 16px !important;
+        max-height: 60vh !important;
+        z-index: 2000 !important;
+    }
+}
+
+/* Garantir que o modal fique escondido durante a busca */
+body.search-active .modal {
+    display: none !important;
+}
+
+/* Animações suaves para a busca */
+.search-results-container {
+    animation: searchSlideDown 0.2s ease-out;
+}
+
+@keyframes searchSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

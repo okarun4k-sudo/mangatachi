@@ -33,6 +33,8 @@ let currentPage = 0;
 let allChapters = [];
 let currentView = 'grid';
 let imageCache = new Map();
+let searchTimeout = null;
+let isSearchActive = false;
 
 // CONFIGURAÇÃO DO TEMPO DE ESPERA (em segundos)
 const DOWNLOAD_WAIT_TIME = 15;
@@ -68,6 +70,222 @@ try {
         console.log('✅ Firebase Curtidas já estava inicializado');
     } else {
         console.error('❌ Erro ao inicializar Firebase Curtidas:', error);
+    }
+}
+
+// ===============================
+// SISTEMA DE BUSCA AVANÇADO
+// ===============================
+
+// Inicializar sistema de busca
+function initializeSearchSystem() {
+    const searchInput = document.getElementById('searchInput');
+    if (!searchInput) return;
+
+    // Criar container para resultados em tempo real
+    const searchResultsContainer = document.createElement('div');
+    searchResultsContainer.id = 'searchResultsContainer';
+    searchResultsContainer.className = 'search-results-container';
+    searchInput.parentNode.appendChild(searchResultsContainer);
+
+    // Event listeners para busca em tempo real
+    searchInput.addEventListener('input', handleSearchInput);
+    searchInput.addEventListener('focus', handleSearchFocus);
+    searchInput.addEventListener('blur', handleSearchBlur);
+    
+    // Tecla Escape para limpar busca
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            clearSearch();
+        }
+    });
+
+    console.log('✅ Sistema de busca inicializado');
+}
+
+// Manipular input de busca em tempo real
+function handleSearchInput(e) {
+    const searchTerm = e.target.value.trim();
+    
+    // Clear previous timeout
+    if (searchTimeout) {
+        clearTimeout(searchTimeout);
+    }
+    
+    // Hide results if empty
+    if (searchTerm === '') {
+        hideSearchResults();
+        clearSearch();
+        return;
+    }
+    
+    // Show loading state
+    showSearchLoading();
+    
+    // Debounce search
+    searchTimeout = setTimeout(() => {
+        performRealTimeSearch(searchTerm);
+    }, 300);
+}
+
+// Manipular foco na busca
+function handleSearchFocus() {
+    const searchTerm = document.getElementById('searchInput').value.trim();
+    if (searchTerm !== '') {
+        performRealTimeSearch(searchTerm);
+    }
+}
+
+// Manipular perda de foco na busca
+function handleSearchBlur() {
+    // Pequeno delay para permitir clicar nos resultados
+    setTimeout(() => {
+        hideSearchResults();
+    }, 200);
+}
+
+// Executar busca em tempo real
+function performRealTimeSearch(searchTerm) {
+    if (searchTerm.length < 2) {
+        hideSearchResults();
+        return;
+    }
+    
+    const results = searchMangas(searchTerm);
+    displaySearchResults(results, searchTerm);
+}
+
+// Buscar mangás com algoritmo melhorado
+function searchMangas(searchTerm) {
+    const term = searchTerm.toLowerCase().trim();
+    if (term.length < 2) return [];
+    
+    return mangas.filter(manga => {
+        const titleMatch = manga.title.toLowerCase().includes(term);
+        const authorMatch = manga.author.toLowerCase().includes(term);
+        const genreMatch = manga.genres.some(genre => 
+            genre.toLowerCase().includes(term)
+        );
+        
+        // Busca por palavras-chave no título
+        const titleWords = manga.title.toLowerCase().split(/\s+/);
+        const keywordMatch = titleWords.some(word => 
+            word.startsWith(term) || term.startsWith(word)
+        );
+        
+        return titleMatch || authorMatch || genreMatch || keywordMatch;
+    }).slice(0, 8); // Limitar a 8 resultados
+}
+
+// Exibir resultados da busca
+function displaySearchResults(results, searchTerm) {
+    const container = document.getElementById('searchResultsContainer');
+    if (!container) return;
+    
+    if (results.length === 0) {
+        container.innerHTML = `
+            <div class="search-result-item no-results">
+                <i class="fas fa-search"></i>
+                <div class="result-info">
+                    <div class="result-title">Nenhum mangá encontrado</div>
+                    <div class="result-subtitle">Tente buscar por título, autor ou gênero</div>
+                </div>
+            </div>
+        `;
+    } else {
+        container.innerHTML = results.map(manga => `
+            <div class="search-result-item" onclick="selectSearchResult(${manga.id})">
+                <img src="${manga.coverUrl}" alt="${manga.title}" class="result-cover">
+                <div class="result-info">
+                    <div class="result-title">${highlightMatch(manga.title, searchTerm)}</div>
+                    <div class="result-subtitle">
+                        <i class="fas fa-user-pen"></i> ${manga.author}
+                    </div>
+                    <div class="result-meta">
+                        <span class="status-badge ${manga.status === 'Em andamento' ? 'status-ongoing' : 'status-complete'}">
+                            ${manga.status}
+                        </span>
+                        <span><i class="fas fa-book"></i> ${getTotalChapters(manga)} cap</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    container.style.display = 'block';
+    isSearchActive = true;
+    
+    // Esconder carrossel e outros elementos durante a busca
+    hideCarousel();
+    hideMainContent();
+}
+
+// Destacar termo buscado nos resultados
+function highlightMatch(text, searchTerm) {
+    const term = searchTerm.toLowerCase();
+    const lowerText = text.toLowerCase();
+    const index = lowerText.indexOf(term);
+    
+    if (index === -1) return text;
+    
+    const before = text.substring(0, index);
+    const match = text.substring(index, index + searchTerm.length);
+    const after = text.substring(index + searchTerm.length);
+    
+    return `${before}<span class="highlight">${match}</span>${after}`;
+}
+
+// Mostrar estado de carregamento na busca
+function showSearchLoading() {
+    const container = document.getElementById('searchResultsContainer');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div class="search-result-item loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <div class="result-info">
+                <div class="result-title">Buscando...</div>
+            </div>
+        </div>
+    `;
+    container.style.display = 'block';
+}
+
+// Esconder resultados da busca
+function hideSearchResults() {
+    const container = document.getElementById('searchResultsContainer');
+    if (container) {
+        container.style.display = 'none';
+    }
+}
+
+// Selecionar resultado da busca
+function selectSearchResult(mangaId) {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.blur();
+    }
+    
+    hideSearchResults();
+    showMangaDetails(mangaId);
+    isSearchActive = false;
+}
+
+// Limpar busca
+function clearSearch() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.value = '';
+    }
+    
+    hideSearchResults();
+    isSearchActive = false;
+    
+    // Mostrar conteúdo principal apenas se estiver na home
+    if (isHomePage()) {
+        showMainContent();
+        showCarousel();
     }
 }
 
@@ -861,6 +1079,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar sistema de download
     initializeDownloadSystem();
     
+    // Inicializar sistema de busca
+    initializeSearchSystem();
+    
     // Inicializar botão voltar fixo
     createFixedBackButton();
     updateFixedBackButton();
@@ -1198,7 +1419,7 @@ function showHomePage() {
     showHeaderElements();
 }
 
-// Buscar mangás
+// Buscar mangás (função original mantida para compatibilidade)
 function searchManga() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
     const sectionsContainer = document.getElementById('sectionsContainer');
@@ -2182,3 +2403,161 @@ function initializeAuth() {
     // Inicializar tema
     initializeTheme();
 }
+
+// ===============================
+// ESTILOS CSS PARA O SISTEMA DE BUSCA
+// ===============================
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchStyles = `
+        <style>
+            .search-results-container {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--background-card);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                max-height: 400px;
+                overflow-y: auto;
+                z-index: 1000;
+                display: none;
+                margin-top: 8px;
+                backdrop-filter: blur(20px);
+            }
+            
+            .search-result-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                border-bottom: 1px solid var(--border-color);
+                cursor: pointer;
+                transition: all 0.2s ease;
+                gap: 12px;
+            }
+            
+            .search-result-item:last-child {
+                border-bottom: none;
+            }
+            
+            .search-result-item:hover {
+                background: var(--background-hover);
+            }
+            
+            .search-result-item.loading {
+                justify-content: center;
+                color: var(--text-gray);
+            }
+            
+            .search-result-item.no-results {
+                justify-content: flex-start;
+                color: var(--text-gray);
+            }
+            
+            .result-cover {
+                width: 50px;
+                height: 70px;
+                object-fit: cover;
+                border-radius: 6px;
+                flex-shrink: 0;
+            }
+            
+            .result-info {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .result-title {
+                font-weight: 600;
+                color: var(--text-light);
+                margin-bottom: 4px;
+                font-size: 0.9rem;
+                line-height: 1.3;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            
+            .result-subtitle {
+                color: var(--text-gray);
+                font-size: 0.8rem;
+                margin-bottom: 6px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            
+            .result-meta {
+                display: flex;
+                gap: 8px;
+                font-size: 0.75rem;
+            }
+            
+            .result-meta .status-badge {
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-size: 0.7rem;
+            }
+            
+            .highlight {
+                background: rgba(30, 136, 229, 0.2);
+                color: var(--primary-color);
+                font-weight: 700;
+                padding: 0 2px;
+                border-radius: 2px;
+            }
+            
+            /* Responsividade para mobile */
+            @media (max-width: 768px) {
+                .search-results-container {
+                    position: fixed;
+                    top: 70px;
+                    left: 16px;
+                    right: 16px;
+                    max-height: 60vh;
+                    z-index: 2000;
+                }
+                
+                .search-result-item {
+                    padding: 10px 12px;
+                }
+                
+                .result-cover {
+                    width: 40px;
+                    height: 56px;
+                }
+                
+                .result-title {
+                    font-size: 0.85rem;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .search-results-container {
+                    left: 10px;
+                    right: 10px;
+                }
+                
+                .search-result-item {
+                    padding: 8px 10px;
+                    gap: 8px;
+                }
+                
+                .result-cover {
+                    width: 35px;
+                    height: 49px;
+                }
+                
+                .result-meta {
+                    flex-direction: column;
+                    gap: 2px;
+                }
+            }
+        </style>
+    `;
+    
+    document.head.insertAdjacentHTML('beforeend', searchStyles);
+});
