@@ -1,6 +1,50 @@
 
 // Dados dos mangás (exemplos)
 const mangas = [
+  {
+  "id": 6,
+  "title": "HP5 DESU KEDO JIDOU CHIYU (AUTO HEAL) GA AREBA SHININIMASEN!",
+  "description": "Aimi Asoyama, uma estudante do primeiro ano do ensino médio, tem um grande plano para se tornar uma streamer popular jogando o hit VRMMORPG Real LIFE Online 2, a fim de encontrar um amigo cuja informação de contato ela perdeu. Ela escolhe jogar como uma aprendiz de santa, pensando que seria a mais atraente... mas acaba sendo uma classe extremamente fraca e sem sorte, que nenhum jogador ativo no mundo está usando. Com apenas 5 de HP, defesa frágil e incapaz de funcionar como lutadora de linha de frente ou de retaguarda, é uma classe de piada hiperespecializada em MP (poder mágico). No entanto, por pura sorte, ela adquire a habilidade única “Cura Automática” (Auto Heal), e seu mundo muda completamente...?",
+  "author": "Yuto Yotsuba",
+  "genres": ["Action", "Adventure", "Comedy", "Fantasy", "School Life"],
+  "translationTeam": "Manga Tachi",
+  "status": "Ongoing",
+  "coverUrl": "https://files.catbox.moe/r6udjq.jpg",
+  "chapters": [
+    {
+      "chapterNumber": 1,
+      "title": "Capítulo 1",
+      "pages": [
+        "https://files.catbox.moe/sobhi3.png",
+        "https://files.catbox.moe/rjbc7s.png",
+        "https://files.catbox.moe/wyliug.png",
+        "https://files.catbox.moe/0ufq17.png",
+        "https://files.catbox.moe/dzsqh1.png",
+        "https://files.catbox.moe/tkxgsc.png",
+        "https://files.catbox.moe/kl741u.png",
+        "https://files.catbox.moe/k0bjh1.png",
+        "https://files.catbox.moe/ccvc1c.png",
+        "https://files.catbox.moe/45b3lz.png",
+        "https://files.catbox.moe/aow99v.png",
+        "https://files.catbox.moe/jxk75g.png",
+        "https://files.catbox.moe/b7d2gb.png",
+        "https://files.catbox.moe/7gdoxk.png",
+        "https://files.catbox.moe/lr57sy.png",
+        "https://files.catbox.moe/eqkahu.png",
+        "https://files.catbox.moe/7o99vu.png",
+        "https://files.catbox.moe/1yz1hr.png",
+        "https://files.catbox.moe/rk6iho.png",
+        "https://files.catbox.moe/cm7r52.png",
+        "https://files.catbox.moe/ctujgs.png",
+        "https://files.catbox.moe/ikomz7.png",
+        "https://files.catbox.moe/kuadpm.png",
+        "https://files.catbox.moe/doi5xd.png",
+        "https://files.catbox.moe/4a4vxq.png"
+      ],
+      "type": "chapter"
+    }
+  ]
+},
     {
         id: 1,
         title: "Jukai",
