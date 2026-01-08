@@ -3055,20 +3055,3 @@ body.search-active .modal {
     }
 }
 
-/* ===============================
-   REMOÇÃO DE ANÚNCIOS PARA VIPs
-   =============================== */
-body.is-vip-user .ad-container,
-body.is-vip-user .download-ad-container,
-body.is-vip-user .ad-responsive,
-body.is-vip-user .ad-featured,
-body.is-vip-user .ad-banner,
-body.is-vip-user ins.adsbygoogle {
-    display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    width: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    pointer-events: none !important;
-}
