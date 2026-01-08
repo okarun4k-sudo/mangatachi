@@ -1,0 +1,32 @@
+name: Notificar Discord Automático
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Permissão para salvar o cache
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Rodar Script de Notificação
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: node notificar.js
+
+      - name: Salvar Cache de Mangás
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add manga_cache.json
+          git commit -m "chore: update manga cache [skip ci]" || echo "Sem mudanças no cache"
+          git push
