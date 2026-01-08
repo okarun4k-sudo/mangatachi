@@ -4,6 +4,18 @@ const FILE_PATH = './manga.js';
 const CACHE_FILE = './manga_cache.json';
 const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 
+// Função para transformar o título do mangá no link da URL (slug)
+function gerarSlug(title) {
+    return title
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+        .replace(/[^\w\s-]/g, "")       // Remove caracteres especiais
+        .replace(/\s+/g, "-")           // Substitui espaços por -
+        .replace(/-+/g, "-")            // Evita hífens duplos
+        .trim();
+}
+
 function extrairMangas() {
     try {
         const content = fs.readFileSync(FILE_PATH, 'utf8');
@@ -17,36 +29,40 @@ function extrairMangas() {
 }
 
 async function enviarDiscord(manga, tipo, infoExtra = {}) {
+    const slug = gerarSlug(manga.title);
+    const linkManga = `https://mangatachi.vercel.app/#/obras/${slug}`;
+    
+    // Sistema de Menção por Nome
+    const mencao = `@${manga.title}`;
+
     let embed = {
-        url: `https://mangatachi.vercel.app/#/manga/${manga.id}`,
-        color: tipo === 'novo_manga' ? 15277667 : 5763719, // Rosa para novo, Verde para capítulo
+        title: tipo === 'novo_manga' ? `✨ NOVO MANGÁ: ${manga.title}` : `🚀 NOVO CAPÍTULO: ${manga.title}`,
+        url: linkManga,
+        color: tipo === 'novo_manga' ? 15277667 : 5763719,
         image: { url: manga.coverUrl },
         timestamp: new Date(),
-        footer: { text: "Mangatachi Reader • Atualização Automática", icon_url: "https://i.imgur.com/your-logo.png" }
+        footer: { text: "Mangatachi Reader • Atualização Automática" }
     };
 
     if (tipo === 'novo_manga') {
-        embed.title = `✨ NOVO MANGÁ ADICIONADO: ${manga.title}`;
-        embed.description = `> ${manga.description.substring(0, 150)}...`;
+        embed.description = `${manga.description ? manga.description.substring(0, 150) + '...' : ''}\n\n[**🔗 Clique aqui para ler no Site**](${linkManga})`;
         embed.fields = [
             { name: "✍️ Autor", value: manga.author, inline: true },
-            { name: "🏷️ Gêneros", value: manga.genres.join(", "), inline: true },
-            { name: "🛡️ Equipe", value: manga.translationTeam || "Desconhecida", inline: true }
+            { name: "🏷️ Gêneros", value: manga.genres.join(", "), inline: true }
         ];
     } else {
-        embed.title = `🚀 NOVO CAPÍTULO: ${manga.title}`;
-        embed.description = `O capítulo **${infoExtra.num}** acabou de sair do forno!`;
+        embed.description = `O capítulo **${infoExtra.num}** já está disponível!\n\n[**📖 Ler o Capítulo ${infoExtra.num} agora**](${linkManga})`;
         embed.fields = [
-            { name: "📖 Título do Cap", value: infoExtra.title || "Sem título", inline: false },
-            { name: "📑 Status no Site", value: manga.status, inline: true }
+            { name: "📖 Título", value: infoExtra.title || `Capítulo ${infoExtra.num}`, inline: false }
         ];
     }
 
     const payload = {
         username: manga.title,
         avatar_url: manga.coverUrl,
-        content: tipo === 'novo_manga' ? "@everyone **NOVIDADE NA SCAN!**" : "@everyone **LANÇAMENTO!**",
-        embeds: [embed]
+        content: `🔔 ${mencao} ${tipo === 'novo_manga' ? 'acaba de chegar!' : 'tem novidade!'}`,
+        embeds: [embed],
+        allowed_mentions: { parse: ["roles", "everyone"] }
     };
 
     await fetch(WEBHOOK_URL, {
