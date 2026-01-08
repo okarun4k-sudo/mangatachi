@@ -8,7 +8,7 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Permissão para salvar o cache
+      contents: write
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
@@ -18,15 +18,15 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Rodar Script de Notificação
+      - name: Rodar Script
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: node notificar.js
 
-      - name: Salvar Cache de Mangás
+      - name: Atualizar Cache
         run: |
-          git config --global user.name "GitHub Actions Bot"
-          git config --global user.email "actions@github.com"
+          git config --global user.name "Mangatachi Bot"
+          git config --global user.email "bot@mangatachi.com"
           git add manga_cache.json
-          git commit -m "chore: update manga cache [skip ci]" || echo "Sem mudanças no cache"
+          git commit -m "chore: update manga cache [skip ci]" || echo "Nada para atualizar"
           git push
