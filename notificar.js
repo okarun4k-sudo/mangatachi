@@ -1,40 +1,52 @@
 const fs = require('fs');
 
-// Configurações
 const FILE_PATH = './manga.js'; 
 const CACHE_FILE = './manga_cache.json';
 const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 
 function extrairMangas() {
-    const content = fs.readFileSync(FILE_PATH, 'utf8');
-    // Regex para pegar o objeto dentro do array de mangás
-    // Assume que seus mangás estão formatados como objetos { id: ..., title: ..., chapters: ... }
-    const match = content.match(/const\s+mangas\s*=\s*(\[[\s\S]*?\]);/);
-    if (!match) return null;
-    
-    // Transforma o texto em objeto real para manipular via código
-    // Usamos o eval de forma controlada pois é um arquivo JS de dados
     try {
+        const content = fs.readFileSync(FILE_PATH, 'utf8');
+        const match = content.match(/const\s+mangas\s*=\s*(\[[\s\S]*?\]);/);
+        if (!match) return null;
         return eval(match[1]);
     } catch (e) {
-        console.error("Erro ao processar o array de mangás:", e);
+        console.error("Erro ao ler manga.js:", e.message);
         return null;
     }
 }
 
-async function dispararWebhook(manga, msgContent, subTitle) {
+async function enviarDiscord(manga, tipo, infoExtra = {}) {
+    let embed = {
+        url: `https://mangatachi.vercel.app/#/manga/${manga.id}`,
+        color: tipo === 'novo_manga' ? 15277667 : 5763719, // Rosa para novo, Verde para capítulo
+        image: { url: manga.coverUrl },
+        timestamp: new Date(),
+        footer: { text: "Mangatachi Reader • Atualização Automática", icon_url: "https://i.imgur.com/your-logo.png" }
+    };
+
+    if (tipo === 'novo_manga') {
+        embed.title = `✨ NOVO MANGÁ ADICIONADO: ${manga.title}`;
+        embed.description = `> ${manga.description.substring(0, 150)}...`;
+        embed.fields = [
+            { name: "✍️ Autor", value: manga.author, inline: true },
+            { name: "🏷️ Gêneros", value: manga.genres.join(", "), inline: true },
+            { name: "🛡️ Equipe", value: manga.translationTeam || "Desconhecida", inline: true }
+        ];
+    } else {
+        embed.title = `🚀 NOVO CAPÍTULO: ${manga.title}`;
+        embed.description = `O capítulo **${infoExtra.num}** acabou de sair do forno!`;
+        embed.fields = [
+            { name: "📖 Título do Cap", value: infoExtra.title || "Sem título", inline: false },
+            { name: "📑 Status no Site", value: manga.status, inline: true }
+        ];
+    }
+
     const payload = {
         username: manga.title,
         avatar_url: manga.coverUrl,
-        content: `@everyone ${msgContent}`,
-        embeds: [{
-            title: subTitle,
-            url: `https://mangatachi.vercel.app/#/manga/${manga.id}`,
-            color: 16753920,
-            image: { url: manga.coverUrl },
-            footer: { text: "Mangatachi Atualizações Automatizadas" },
-            timestamp: new Date()
-        }]
+        content: tipo === 'novo_manga' ? "@everyone **NOVIDADE NA SCAN!**" : "@everyone **LANÇAMENTO!**",
+        embeds: [embed]
     };
 
     await fetch(WEBHOOK_URL, {
@@ -44,7 +56,7 @@ async function dispararWebhook(manga, msgContent, subTitle) {
     });
 }
 
-async function principal() {
+async function executar() {
     const mangasAtuais = extrairMangas();
     if (!mangasAtuais) return;
 
@@ -57,24 +69,22 @@ async function principal() {
         const mangaNoCache = cache.find(m => m.id === manga.id);
 
         if (!mangaNoCache) {
-            // CASO 1: Mangá novo que não existia no cache
-            console.log(`Novo mangá detectado: ${manga.title}`);
-            await dispararWebhook(manga, "📖 **NOVO MANGÁ ADICIONADO!**", `Venha ler ${manga.title} agora!`);
+            await enviarDiscord(manga, 'novo_manga');
         } else {
-            // CASO 2: Mangá já existia, verificar se o número de capítulos aumentou
-            const capsAtuais = Object.keys(manga.chapters || {}).length;
-            const capsCache = Object.keys(mangaNoCache.chapters || {}).length;
+            const totalCapsAtuais = manga.chapters ? manga.chapters.length : 0;
+            const totalCapsCache = mangaNoCache.chapters ? mangaNoCache.chapters.length : 0;
 
-            if (capsAtuais > capsCache) {
-                const ultCap = Object.keys(manga.chapters).pop();
-                console.log(`Novo capítulo para ${manga.title}: ${ultCap}`);
-                await dispararWebhook(manga, "🚀 **NOVO CAPÍTULO DISPONÍVEL!**", `${manga.title} - Capítulo ${ultCap}`);
+            if (totalCapsAtuais > totalCapsCache) {
+                const ultimoCap = manga.chapters[totalCapsAtuais - 1];
+                await enviarDiscord(manga, 'novo_cap', { 
+                    num: ultimoCap.chapterNumber, 
+                    title: ultimoCap.title 
+                });
             }
         }
     }
 
-    // Atualiza o cache para a próxima execução
-    fs.writeFileSync(CACHE_FILE, JSON.stringify(mangasAtuais));
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(mangasAtuais, null, 2));
 }
 
-principal();
+executar();
