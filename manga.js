@@ -1,6 +1,27 @@
 
 // Dados dos mangás (exemplos)
 const mangas = [
+   {
+    id: 19,
+    title: "Youjo Robot to Hentai Hakase",
+    description: "Nova webcomic da criadora de Happy Happia. A história acompanha uma professora pervertida que se apaixona por sua criação, uma jovem robô que a despreza profundamente.",
+    author: "Ino (いの)",
+    genres: ["Comédia", "Amor entre garotas", "Um recorte da vida"],
+    translationTeam: "MangaTachi",
+    status: "Em andamento",
+    coverUrl: "https://8upload.com/image/8a0203c4c4095dc2/caps.jpg",
+    chapters: [
+        {
+            chapterNumber: 1,
+            title: "Capítulo 1",
+            pages: [
+                "https://8upload.com/image/06e9f477bf4a06c1/01.png",
+                "https://8upload.com/image/9bcfe2774e662583/02.png"
+                ],
+            type: "chapter"
+        }
+    ]
+},
   {
   "id": 17,
   "title": "HP5 DESU KEDO JIDOU CHIYU (AUTO HEAL) GA AREBA SHININIMASEN!",
