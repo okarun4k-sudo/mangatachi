@@ -31,38 +31,37 @@ async function enviarDiscord(manga, tipo, infoExtra = {}) {
     const slug = gerarSlug(manga.title);
     const linkManga = `https://mangatachi.vercel.app/#/obras/${slug}`;
     
-    // MELHORIA NA MENÇÃO: Se o nome tiver espaços, o Discord precisa que ele 
-    // esteja exatamente como o nome do Cargo. 
-    const mencao = `@${manga.title}`;
+    // Define qual cargo mencionar baseado no tipo de atualização
+    const mencao = tipo === 'novo_manga' ? '@Novas Obras' : '@Novos Capitulos';
 
     let embed = {
-        title: tipo === 'novo_manga' ? `✨ NOVO MANGÁ: ${manga.title}` : `🚀 NOVO CAPÍTULO: ${manga.title}`,
+        title: tipo === 'novo_manga' ? `✨ NOVIDADE: ${manga.title}` : `🚀 ATUALIZAÇÃO: ${manga.title}`,
         url: linkManga,
         color: tipo === 'novo_manga' ? 15277667 : 5763719,
         image: { url: manga.coverUrl },
         timestamp: new Date(),
-        footer: { text: "Mangatachi Reader • Atualização Automática" }
+        footer: { text: "Mangatachi Reader • Sistema de Notificações" }
     };
 
     if (tipo === 'novo_manga') {
-        embed.description = `${manga.description ? manga.description.substring(0, 150) + '...' : ''}\n\n[**🔗 Clique aqui para ler no Site**](${linkManga})`;
+        embed.description = `🎉 **Um novo título chegou à nossa biblioteca!**\n\n> ${manga.description ? manga.description.substring(0, 150) + '...' : ''}\n\n[**🔗 Ler Agora**](${linkManga})`;
         embed.fields = [
             { name: "✍️ Autor", value: manga.author, inline: true },
             { name: "🏷️ Gêneros", value: manga.genres.join(", "), inline: true }
         ];
     } else {
-        embed.description = `O capítulo **${infoExtra.num}** de **${manga.title}** já está disponível!\n\n[**📖 Ler o Capítulo ${infoExtra.num} agora**](${linkManga})`;
+        embed.description = `📖 O capítulo **${infoExtra.num}** de **${manga.title}** já está disponível no site!\n\n[**📖 Ler o Capítulo agora**](${linkManga})`;
         if (infoExtra.title) {
-            embed.fields = [{ name: "📖 Título do Cap", value: infoExtra.title, inline: false }];
+            embed.fields = [{ name: "📑 Título do Cap", value: infoExtra.title, inline: false }];
         }
     }
 
     const payload = {
         username: "Mangatachi Bot",
-        avatar_url: "https://mangatachi.vercel.app/favicon.ico", // Coloque seu favicon aqui
-        content: `🔔 **${mencao}** ${tipo === 'novo_manga' ? 'foi adicionado à biblioteca!' : 'recebeu atualização!'}`,
+        avatar_url: "https://mangatachi.vercel.app/favicon.ico",
+        content: `🔔 ${mencao}`, // Menciona apenas o cargo geral
         embeds: [embed],
-        allowed_mentions: { parse: ["roles", "everyone", "users"] }
+        allowed_mentions: { parse: ["roles"] } // Permite apenas a menção de cargos
     };
 
     await fetch(WEBHOOK_URL, {
@@ -82,25 +81,22 @@ async function executar() {
     if (cacheExistia) {
         cache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
     } else {
-        // Se o cache NÃO existe, criamos ele agora com o que já tem no site
-        // para não disparar 50 notificações de uma vez na primeira rodada.
+        // Na primeira vez, cria o cache sem avisar nada (para evitar spam)
         console.log("Criando cache inicial silencioso...");
         fs.writeFileSync(CACHE_FILE, JSON.stringify(mangasAtuais, null, 2));
-        return; // Para aqui e só avisa no próximo Push
+        return;
     }
 
     for (const manga of mangasAtuais) {
         const mangaNoCache = cache.find(m => m.id === manga.id);
 
         if (!mangaNoCache) {
-            // Se o ID é novo no arquivo, avisa novo mangá
             await enviarDiscord(manga, 'novo_manga');
         } else {
             const totalCapsAtuais = manga.chapters ? manga.chapters.length : 0;
             const totalCapsCache = mangaNoCache.chapters ? mangaNoCache.chapters.length : 0;
 
             if (totalCapsAtuais > totalCapsCache) {
-                // Pega apenas os capítulos novos (caso você adicione mais de um de uma vez)
                 const novosCaps = manga.chapters.slice(totalCapsCache);
                 for (const cap of novosCaps) {
                     await enviarDiscord(manga, 'novo_cap', { 
@@ -112,7 +108,6 @@ async function executar() {
         }
     }
 
-    // Salva o estado atual
     fs.writeFileSync(CACHE_FILE, JSON.stringify(mangasAtuais, null, 2));
 }
 
