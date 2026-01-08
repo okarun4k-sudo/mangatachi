@@ -1,5 +1,5 @@
 // CONSTANTES DO SISTEMA
-const SITE_VERSION = "3.0.1 (15)";
+const SITE_VERSION = "3.0.2 (16)";
 const DISCORD_SERVER_ID = "1403373682868359238";
 
 // Função para verificar se usuário está no servidor
@@ -42,7 +42,9 @@ const DOWNLOAD_WAIT_TIME = 15;
 // Configurações do Discord OAuth
 const DISCORD_CLIENT_ID = "1437114497050345613";
 const DISCORD_REDIRECT_URI = "https://mangatachi.vercel.app/auth.html";
-const DISCORD_SCOPE = "identify email";
+// EM script.js - Substitua a linha antiga por esta:
+const DISCORD_SCOPE = "identify email guilds.members.read";
+
 
 // ===============================
 // CONFIGURAÇÕES FIREBASE
@@ -72,6 +74,83 @@ try {
         console.error('❌ Erro ao inicializar Firebase Curtidas:', error);
     }
 }
+
+// ===============================
+// SISTEMA VIP / REMOÇÃO DE ANÚNCIOS
+// ===============================
+
+// IDs dos cargos que NÃO devem ver anúncios (Donator, Staff, Equipe, etc.)
+const VIP_ROLE_IDS = [
+    "1403377953739374753",
+    "1403378167162343425",
+    "1422726987918606428",
+    "1423653900849774602",
+    "1436304148562968647",
+    "1436305523401293904",
+    "1424056194934243449",
+    "1424056449499267153",
+    "1436306716487581777",
+    "1441114038212890627",
+    "1458795212502728745"
+];
+
+// Função para verificar cargos e remover anúncios
+async function checkVipStatus() {
+    const token = localStorage.getItem('discordToken');
+    if (!token) return;
+
+    // ID do seu servidor MangaTachi
+    const SERVER_ID = "1403373682868359238"; 
+
+    try {
+        // Busca os dados do membro neste servidor específico
+        const response = await fetch(`https://discord.com/api/users/@me/guilds/${SERVER_ID}/member`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            const memberData = await response.json();
+            const userRoles = memberData.roles; // Lista de cargos do usuário
+
+            // Verifica se o usuário tem algum dos cargos da lista VIP
+            const isVip = userRoles.some(roleId => VIP_ROLE_IDS.includes(roleId));
+
+            if (isVip) {
+                console.log('💎 VIP Detectado: Removendo publicidade...');
+                disableAds();
+            } else {
+                console.log('👤 Usuário comum: Mantendo publicidade.');
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao verificar VIP:', error);
+    }
+}
+
+// Função que remove os anúncios da tela
+function disableAds() {
+    // 1. Marca o corpo do site como VIP (para o CSS funcionar)
+    document.body.classList.add('is-vip-user');
+
+    // 2. Remove elementos de anúncio via Javascript
+    const adSelectors = [
+        '.ad-container', 
+        '.download-ad-container', 
+        '.ad-responsive',
+        '.ad-featured',
+        'ins.adsbygoogle', // Google Adsense
+        'iframe[src*="highperformanceformat"]' // Seus anúncios popunder
+    ];
+
+    adSelectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(el => {
+            el.remove(); // Deleta o elemento do HTML
+        });
+    });
+}
+
 
 // ===============================
 // SISTEMA DE BUSCA AVANÇADO
@@ -1176,6 +1255,10 @@ function initializeAuth() {
     if (user) {
         console.log('Usuário encontrado no localStorage:', user.username);
         updateUIForLoggedUser(user);
+                
+        // --- ADICIONE ESTA LINHA AQUI ---
+        checkVipStatus(); 
+        // --------------------------------
     } else {
         console.log('Nenhum usuário logado');
         showLoginSection();
