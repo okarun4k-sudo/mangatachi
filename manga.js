@@ -177,7 +177,7 @@ const mangas = [
             },
             {
     chapterNumber: 4,
-    title: "O Cabelo Longo espreitador",
+    title: "O Cabelo Longo Espreitador",
     pages: [
         "https://8upload.com/image/a719bde5fa14bd1b/pag1.png",  // Página 1
         "https://8upload.com/image/ce59e59395c080e2/pag2.png",  // Página 2
