@@ -174,7 +174,38 @@ const mangas = [
                     "https://files.catbox.moe/spj948.png" // Página 24
                 ],
                 type: "chapter"
-            }
+            },
+            {
+    chapterNumber: 4,
+    title: "O Cabelo Longo espreitador",
+    pages: [
+        "https://8upload.com/image/a719bde5fa14bd1b/pag1.png",  // Página 1
+        "https://8upload.com/image/ce59e59395c080e2/pag2.png",  // Página 2
+        "https://8upload.com/image/3a220e6b8ae18efc/pag3.png",  // Página 3
+        "https://8upload.com/image/953fddfac8dde844/pag4.png",  // Página 4
+        "https://8upload.com/image/f3e2b0155d518b22/pag5.png",  // Página 5
+        "https://8upload.com/image/8a66920687ebbf8e/pag6.png",  // Página 6
+        "https://8upload.com/image/12cd783274f6d5ef/pag7.png",  // Página 7
+        "https://8upload.com/image/37d3504efe112a51/pag8.png",  // Página 8
+        "https://8upload.com/image/8895e7bb5e0ed947/pag9.png",  // Página 9
+        "https://8upload.com/image/4d9de84af5354b29/pag10.png", // Página 10
+        "https://8upload.com/image/35e1c49d0ad76173/pag11.png", // Página 11
+        "https://8upload.com/image/889912883bc695e4/pag12.png", // Página 12
+        "https://8upload.com/image/b1076b39c45a29fa/pag13.png", // Página 13
+        "https://8upload.com/image/d09c2e76955053d0/pag14.png", // Página 14
+        "https://8upload.com/image/7ed9b9188d940542/pag15.png", // Página 15
+        "https://8upload.com/image/ea88d0d3f7bff7d9/pag16.png", // Página 16
+        "https://8upload.com/image/d69ef09daa20b65c/pag18.png", // Página 17 (リストのpag18)
+        "https://8upload.com/image/5ca51109afae2c36/pag19.png", // Página 18 (リストのpag19)
+        "https://8upload.com/image/568e8fd20a0fedea/pag20.png", // Página 19 (リスト de pag20)
+        "https://8upload.com/image/7ce861847021822f/pag21.png", // Página 20 (リスト de pag21)
+        "https://8upload.com/image/7db82f8326fabfd8/pag22.png", // Página 21 (リスト de pag22)
+        "https://8upload.com/image/45ca303db0b77a7b/pag23.png", // Página 22 (リスト de pag23)
+        "https://8upload.com/image/00d98b8c66138fc8/pag24.png"  // Página 23 (リスト de pag24)
+    ],
+    type: "chapter"
+}
+
         ]
     },
     {
