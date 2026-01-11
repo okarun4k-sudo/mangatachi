@@ -1,0 +1,16 @@
+name: Resumo de Domingo
+on:
+  schedule:
+    # 23:00 UTC é 20:00 em Brasília
+    - cron: '0 23 * * 0'
+  workflow_dispatch: # Permite rodar manualmente para testar
+
+jobs:
+  envio_resumo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Rodar Script de Resumo
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: node resumo_semanal.js
