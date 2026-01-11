@@ -31,7 +31,7 @@ async function enviarDiscord(manga, tipo, infoExtra = {}) {
         image: { url: manga.coverUrl },
         timestamp: new Date(),
         footer: { 
-            text: "Mangatachi Reader • Atualizações em tempo real", 
+            text: "Mangatachi Reader • Atualizações", 
             icon_url: "https://mangatachi.vercel.app/favicon.ico" 
         }
     };
@@ -53,7 +53,7 @@ async function enviarDiscord(manga, tipo, infoExtra = {}) {
 
     const payload = {
         username: "Mangatachi Notificações",
-        avatar_url: "https://mangatachi.vercel.app/favicon.ico", 
+        avatar_url: "https://files.catbox.moe/0rjf4e.png", 
         content: `🔔 **ALERTA DE LANÇAMENTO:** ${mencao}`,
         embeds: [embed],
         allowed_mentions: { roles: [ID_CARGO_NOVAS_OBRAS, ID_CARGO_NOVOS_CAPITULOS] }
