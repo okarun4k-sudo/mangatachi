@@ -4,6 +4,10 @@ const FILE_PATH = './manga.js';
 const CACHE_FILE = './manga_cache.json';
 const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 
+// IDs extraídos da sua mensagem
+const ID_CARGO_NOVAS_OBRAS = "1458876008785641652"; 
+const ID_CARGO_NOVOS_CAPITULOS = "1458876246841757726"; 
+
 function gerarSlug(title) {
     return title
         .toLowerCase()
@@ -31,8 +35,10 @@ async function enviarDiscord(manga, tipo, infoExtra = {}) {
     const slug = gerarSlug(manga.title);
     const linkManga = `https://mangatachi.vercel.app/#/obras/${slug}`;
     
-    // Define qual cargo mencionar baseado no tipo de atualização
-    const mencao = tipo === 'novo_manga' ? '@Novas Obras' : '@Novos Capitulos';
+    // Formato de menção por ID que garante o "ping" azul no Discord
+    const mencao = tipo === 'novo_manga' 
+        ? `<@&${ID_CARGO_NOVAS_OBRAS}>` 
+        : `<@&${ID_CARGO_NOVOS_CAPITULOS}>`;
 
     let embed = {
         title: tipo === 'novo_manga' ? `✨ NOVIDADE: ${manga.title}` : `🚀 ATUALIZAÇÃO: ${manga.title}`,
@@ -59,9 +65,9 @@ async function enviarDiscord(manga, tipo, infoExtra = {}) {
     const payload = {
         username: "Mangatachi Bot",
         avatar_url: "https://mangatachi.vercel.app/favicon.ico",
-        content: `🔔 ${mencao}`, // Menciona apenas o cargo geral
+        content: `🔔 ${mencao}`, 
         embeds: [embed],
-        allowed_mentions: { parse: ["roles"] } // Permite apenas a menção de cargos
+        allowed_mentions: { roles: [ID_CARGO_NOVAS_OBRAS, ID_CARGO_NOVOS_CAPITULOS] } 
     };
 
     await fetch(WEBHOOK_URL, {
@@ -81,7 +87,6 @@ async function executar() {
     if (cacheExistia) {
         cache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
     } else {
-        // Na primeira vez, cria o cache sem avisar nada (para evitar spam)
         console.log("Criando cache inicial silencioso...");
         fs.writeFileSync(CACHE_FILE, JSON.stringify(mangasAtuais, null, 2));
         return;
