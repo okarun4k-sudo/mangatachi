@@ -1,16 +1,28 @@
-name: Resumo de Domingo
+name: Resumo Mensal Mangatachi
 on:
   schedule:
-    # 23:00 UTC é 20:00 em Brasília
-    - cron: '0 23 * * 0'
-  workflow_dispatch: # Permite rodar manualmente para testar
+    # Roda todos os dias às 20:00 (Brasília) do dia 28 ao 31
+    - cron: '0 23 28-31 * *'
+  workflow_dispatch: # Mantém para você poder testar quando quiser
 
 jobs:
   envio_resumo:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Verificar se é o último dia do mês
+        id: check_date
+        run: |
+          # Verifica se o dia de amanhã é '01'
+          if [ "$(date -d "+1 day" +%d)" = "01" ]; then
+            echo "::set-output name=is_last_day::true"
+          else
+            echo "::set-output name=is_last_day::false"
+          fi
+
       - name: Rodar Script de Resumo
+        if: steps.check_date.outputs.is_last_day == 'true'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: node resumo_semanal.js
