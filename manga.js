@@ -19,6 +19,15 @@ const mangas = [
                 "https://8upload.com/image/9bcfe2774e662583/02.png"
                 ],
             type: "chapter"
+        },
+                {
+            chapterNumber: 2,
+            title: "Capítulo 2",
+            pages: [
+                "https://8upload.com/image/f73f0664ccfcbae1/pagg1.png",
+                "https://8upload.com/image/6b562be5bcbebab2/pagg2.png"
+                ],
+            type: "chapter"
         }
     ]
 },
@@ -177,7 +186,7 @@ const mangas = [
             },
             {
     chapterNumber: 4,
-    title: "O Cabelo Longo Espreitador",
+    title: "O Cabelo Longo espreitador",
     pages: [
         "https://8upload.com/image/a719bde5fa14bd1b/pag1.png",  // Página 1
         "https://8upload.com/image/ce59e59395c080e2/pag2.png",  // Página 2
