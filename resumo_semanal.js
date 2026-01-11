@@ -2,7 +2,7 @@ const fs = require('fs');
 
 const FILE_PATH = './manga.js'; 
 const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
-const ICONE_PNG = "https://files.catbox.moe/0rjf4e.png"; // Seu ícone profissional
+const ICONE_PNG = "https://files.catbox.moe/0rjf4e.png"; 
 
 function extrairMangas() {
     try {
@@ -16,35 +16,34 @@ async function enviarNewsletter() {
     const mangas = extrairMangas();
     if (!mangas) return;
 
-    // Pega os últimos 5 mangás mexidos para não poluir muito
-    const destaques = mangas.slice(-5).reverse(); 
+    // AUMENTAMOS PARA 10: No mês você provavelmente terá mais obras atualizadas
+    const destaques = mangas.slice(-10).reverse(); 
 
     const fields = destaques.map(m => {
         const ultimoCap = m.chapters[m.chapters.length - 1];
-        // Cria um pequeno resumo de curiosidade baseado na descrição ou gênero
         const teaser = m.description 
-            ? `*${m.description.substring(0, 60)}...*` 
-            : `Prepare-se para fortes emoções neste novo capítulo!`;
+            ? `*${m.description.substring(0, 80)}...*` 
+            : `Confira as últimas atualizações desta obra incrível!`;
 
         return {
-            name: `🔥 ${m.title.toUpperCase()}`,
-            value: `> ${teaser}\n**Status:** \`Cap. ${ultimoCap.chapterNumber} disponível\`\n[**➜ Ler agora no site**](https://mangatachi.vercel.app/#/obras/${m.id})`,
-            inline: false // Deixamos false para dar mais destaque ao texto de curiosidade
+            name: `🏆 ${m.title.toUpperCase()}`,
+            value: `> ${teaser}\n**Status no Mês:** \`Cap. ${ultimoCap.chapterNumber} disponível\`\n[**➜ Ver no Mangatachi**](https://mangatachi.vercel.app/#/obras/${m.id})`,
+            inline: false 
         };
     });
 
     const payload = {
-        username: "Mangatachi Semanário",
+        username: "Mangatachi Mensal",
         avatar_url: ICONE_PNG,
-        content: "⭐ **O RESUMO DA SEMANA CHEGOU!**",
+        content: "⭐ **FECHAMENTO DO MÊS MANGATACHI!**",
         embeds: [{
-            title: "🗞️ MANGATACHI NEWS - EDIÇÃO DOMINGÃO",
-            description: "Perdeu algum lançamento? A semana foi agitada e nossos tradutores não pararam! Confira os destaques que você precisa ler antes da segunda-feira começar:",
-            color: 15277667, // Dourado profissional
+            title: "📚 RETROSPECTIVA MENSAL - O MELHOR DA SCAN",
+            description: "O mês termina, mas as histórias continuam! Aqui está o resumo de tudo o que brilhou no nosso site nos últimos 30 dias. Coloque sua leitura em dia para começar o próximo mês com tudo!",
+            color: 15277667, 
             fields: fields,
-            image: { url: destaques[0].coverUrl }, // Usa a capa do mangá mais recente como banner
+            image: { url: destaques[0].coverUrl }, 
             footer: { 
-                text: "Mangatachi Reader • Onde a história continua", 
+                text: "Mangatachi • Agradecemos por ler conosco este mês!", 
                 icon_url: ICONE_PNG 
             },
             timestamp: new Date()
