@@ -43,10 +43,9 @@ async function enviarDiscord(manga, tipo, novosCapitulos = []) {
             { name: "🏷️ Gêneros", value: `\`${manga.genres.slice(0, 3).join(", ")}\``, inline: true }
         ];
     } else {
-        // LÓGICA DE COMBO OU CAPÍTULO ÚNICO
         if (novosCapitulos.length > 1) {
             const listaCaps = novosCapitulos.map(c => `• **Cap. ${c.chapterNumber}**: ${c.title || "Sem título"}`).join("\n");
-            embed.description = `🔥 **COMBO DE LANÇAMENTOS!**\n\n${novosCapitulos.length} novos capítulos foram adicionados de uma vez!\n\n${listaCaps}`;
+            embed.description = `🔥 **COMBO DE LANÇAMENTOS!**\n\n${novosCapitulos.length} novos capítulos foram adicionados!\n\n${listaCaps}`;
         } else {
             const cap = novosCapitulos[0];
             embed.description = `🚀 **NOVO CAPÍTULO DISPONÍVEL!**\n\nO capítulo **${cap.chapterNumber}** já pode ser lido em nosso site.`;
@@ -55,7 +54,6 @@ async function enviarDiscord(manga, tipo, novosCapitulos = []) {
                 { name: "📑 Título", value: `\`${cap.title || "---"}\``, inline: true }
             ];
         }
-        // Link comum para ambos os casos de capítulos
         if (!embed.fields) embed.fields = [];
         embed.fields.push({ name: "🔗 Link Direto", value: `[Clique aqui para ler](${linkManga})`, inline: false });
     }
@@ -89,12 +87,15 @@ async function executar() {
         const mangaNoCache = cache.find(m => m.id === manga.id);
 
         if (!mangaNoCache) {
-            // Obra totalmente nova
             await enviarDiscord(manga, 'novo_manga');
-        } else if (manga.chapters.length > mangaNoCache.chapters.length) {
-            // Novos capítulos detectados (pode ser 1 ou vários)
-            const novos = manga.chapters.slice(mangaNoCache.chapters.length);
-            await enviarDiscord(manga, 'novo_cap', novos);
+        } else {
+            // MELHORIA AQUI: Filtra comparando os números de capítulo, não apenas a contagem
+            const numerosNoCache = mangaNoCache.chapters.map(c => c.chapterNumber);
+            const novosRealmente = manga.chapters.filter(c => !numerosNoCache.includes(c.chapterNumber));
+
+            if (novosRealmente.length > 0) {
+                await enviarDiscord(manga, 'novo_cap', novosRealmente);
+            }
         }
     }
 
