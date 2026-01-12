@@ -16,19 +16,26 @@
       {
         "chapterNumber": 1,
         "title": "Capítulo 1",
-        "pages": [
-          "https://8upload.com/image/06e9f477bf4a06c1/01.png",
-          "https://8upload.com/image/9bcfe2774e662583/02.png"
-        ],
         "type": "chapter"
       },
       {
         "chapterNumber": 2,
         "title": "Capítulo 2",
-        "pages": [
-          "https://8upload.com/image/f73f0664ccfcbae1/pagg1.png",
-          "https://8upload.com/image/6b562be5bcbebab2/pagg2.png"
-        ],
+        "type": "chapter"
+      },
+      {
+        "chapterNumber": 3,
+        "title": "Capítulo 3",
+        "type": "chapter"
+      },
+      {
+        "chapterNumber": 4,
+        "title": "Capítulo 4",
+        "type": "chapter"
+      },
+      {
+        "chapterNumber": 5,
+        "title": "Capítulo 5",
         "type": "chapter"
       }
     ]
