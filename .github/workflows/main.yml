@@ -8,7 +8,7 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Essencial para salvar o manga_cache.json de volta no GitHub
+      contents: write # Permite salvar o arquivo de cache no seu repositório
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
@@ -23,15 +23,14 @@ jobs:
       - name: Rodar Script
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: node notificar.js
+        run: node notificar.js # Garante a execução do script de alerta
 
       - name: Salvar Alterações no Cache
         run: |
           git config --global user.name "Mangatachi Bot"
           git config --global user.email "bot@mangatachi.com"
-          # Adiciona o arquivo mesmo que ele tenha acabado de ser criado
           git add manga_cache.json
-          # O [skip ci] evita que o commit do bot dispare o script novamente em loop
+          # O [skip ci] evita que o bot entre em loop infinito ao salvar o arquivo
           git commit -m "chore: update manga cache [skip ci]" || echo "Nada para atualizar"
           git pull --rebase origin main
           git push origin main
