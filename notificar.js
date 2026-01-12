@@ -77,11 +77,10 @@ async function executar() {
     const mangasAtuais = extrairMangas();
     if (!mangasAtuais) return;
 
-    let cache = fs.existsSync(CACHE_FILE) 
-        ? JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8')) 
-        : (fs.writeFileSync(CACHE_FILE, JSON.stringify(mangasAtuais, null, 2)), []);
-    
-    if (cache.length === 0) return;
+    let cache = [];
+    if (fs.existsSync(CACHE_FILE)) {
+        cache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
+    }
 
     for (const manga of mangasAtuais) {
         const mangaNoCache = cache.find(m => m.id === manga.id);
@@ -89,7 +88,7 @@ async function executar() {
         if (!mangaNoCache) {
             await enviarDiscord(manga, 'novo_manga');
         } else {
-            // MELHORIA AQUI: Filtra comparando os números de capítulo, não apenas a contagem
+            // COMPARAÇÃO SEGURA: Verifica quais números de capítulo não estão no cache
             const numerosNoCache = mangaNoCache.chapters.map(c => c.chapterNumber);
             const novosRealmente = manga.chapters.filter(c => !numerosNoCache.includes(c.chapterNumber));
 
@@ -99,6 +98,7 @@ async function executar() {
         }
     }
 
+    // Atualiza o arquivo de cache com os dados atuais
     fs.writeFileSync(CACHE_FILE, JSON.stringify(mangasAtuais, null, 2));
 }
 
