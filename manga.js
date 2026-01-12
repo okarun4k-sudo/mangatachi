@@ -37,6 +37,24 @@ const mangas = [
                 "https://8upload.com/image/935255ff410ca5ac/cap2.png"
                 ],
             type: "chapter"
+        },
+                        {
+            chapterNumber: 4,
+            title: "Capítulo 4",
+            pages: [
+                "https://8upload.com/image/881b1cad5db74baa/cap41.png",
+                "https://8upload.com/image/210ca4c10cb5286e/cap42.png"
+                ],
+            type: "chapter"
+        },
+                        {
+            chapterNumber: 5,
+            title: "Capítulo 5",
+            pages: [
+                "https://8upload.com/image/8ae1904c1fac21a9/cap51.png",
+                "https://8upload.com/image/12d0afbe52ad5636/cap52.png"
+                ],
+            type: "chapter"
         }
     ]
 },
