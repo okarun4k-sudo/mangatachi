@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { mangas } from './api/_data.js'; // Ajuste o caminho se necessário
+import { mangas } from './api/_data.js';
 
 const app = express();
 app.use(cors());
@@ -22,5 +22,11 @@ app.get('/api/mangas', (req, res) => {
     res.json(mangas.map(m => ({ id: m.id, titulo: m.title, slug: toSlug(m.title) })));
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Rodando na porta ${PORT}`));
+// Isso permite que o código ainda rode localmente, mas a Vercel vai ignorar
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => console.log(`Rodando na porta ${PORT}`));
+}
+
+// ESSENCIAL PARA VERCEL:
+export default app;
