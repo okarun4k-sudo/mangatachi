@@ -1,6 +1,6 @@
 
 // Dados dos mangás (exemplos)
-const mangas = [
+export const mangas = [
    {
     id: 19,
     title: "Youjo Robot to Hentai Hakase",
