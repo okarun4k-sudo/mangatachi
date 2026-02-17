@@ -250,8 +250,38 @@
           "https://8upload.com/image/00d98b8c66138fc8/pag24.png"
         ],
         "type": "chapter"
-      }
-                  
+      }, 
+          {
+  "chapterNumber": 5,
+  "title": "Arvore da Morte Honrosa",
+  "pages": [
+    "https://8upload.com/image/8e1b57e7800f2ad5/Pag21__21_.webp",
+    "https://8upload.com/image/a790e63fd1b185c7/Pag21__17_.webp",
+    "https://8upload.com/image/fba70723b1f637dd/Pag21__18_.webp",
+    "https://8upload.com/image/8f8f15cb63e595cd/Pag21__19_.webp",
+    "https://8upload.com/image/2684eb90117128eb/Pag21__20_.webp",
+    "https://8upload.com/image/07467949e49a6c42/Pag21__16_.webp",
+    "https://8upload.com/image/dc012d91533d5b82/Pag21__15_.webp",
+    "https://8upload.com/image/4d22abb96307271f/Pag21__14_.webp",
+    "https://8upload.com/image/b5bfb3b8fc502caa/Pag21__13_.webp",
+    "https://8upload.com/image/1befb273c1d3abdb/Pag21__9_.webp",
+    "https://8upload.com/image/0d1ed1c02000e1fb/Pag21__10_.webp",
+    "https://8upload.com/image/72c1d2e3b6bfc9f4/Pag21__11_.webp",
+    "https://8upload.com/image/7900bae6dba9acdf/Pag21__12_.webp",
+    "https://8upload.com/image/200022328659b027/Pag21__8_.webp",
+    "https://8upload.com/image/da9bb685e3521e68/Pag21__7_.webp",
+    "https://8upload.com/image/d0aba1508d538958/Pag21__6_.webp",
+    "https://8upload.com/image/e95aba700a279006/Pag21__5_.webp",
+    "https://8upload.com/image/70c94ebce3f8a0ac/Pag18.webp",
+    "https://8upload.com/image/c4f8ba70a636b439/Pag19.webp",
+    "https://8upload.com/image/db999cbf891295ed/Pag21__22_.webp",
+    "https://8upload.com/image/ad4b40e460a69c81/Pag21__2_.webp",
+    "https://8upload.com/image/92390a6e330e5205/Pag21__3_.webp",
+    "https://8upload.com/image/76d6d69f6995f11e/Pag21__4_.webp"
+  ],
+  "type": "chapter"
+}
+      
     ]
   },
   {
