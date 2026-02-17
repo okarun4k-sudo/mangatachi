@@ -23,7 +23,7 @@ jobs:
       - name: Rodar Script
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: node notificar.js # Garante a execução do script de alerta
+        run: node notificar.cjs # Garante a execução do script de alerta
 
       - name: Salvar Alterações no Cache
         run: |
