@@ -250,7 +250,37 @@
           "https://8upload.com/image/00d98b8c66138fc8/pag24.png"
         ],
         "type": "chapter"
-      }
+      }, 
+                  {
+                chapterNumber: 5,
+                title: "Arvore da Morte Honrosa",
+                pages: [
+                    "https://8upload.com/image/8e1b57e7800f2ad5/Pag21__21_.webp",  // Página 1
+                    "https://8upload.com/image/a790e63fd1b185c7/Pag21__17_.webp",  // Página 2
+                    "https://8upload.com/image/fba70723b1f637dd/Pag21__18_.webp",  // Página 3
+                    "https://8upload.com/image/8f8f15cb63e595cd/Pag21__19_.webp",  // Página 4
+                    "https://8upload.com/image/2684eb90117128eb/Pag21__20_.webp",  // Página 5
+                    "https://8upload.com/image/07467949e49a6c42/Pag21__16_.webp",  // Página 6
+                    "https://8upload.com/image/dc012d91533d5b82/Pag21__15_.webp",  // Página 7
+                    "https://8upload.com/image/4d22abb96307271f/Pag21__14_.webp",  // Página 8
+                    "https://8upload.com/image/b5bfb3b8fc502caa/Pag21__13_.webp",  // Página 9
+                    "https://8upload.com/image/1befb273c1d3abdb/Pag21__9_.webp",  // Página 10
+                    "https://8upload.com/image/0d1ed1c02000e1fb/Pag21__10_.webp",  // Página 11
+                    "https://8upload.com/image/72c1d2e3b6bfc9f4/Pag21__11_.webp",  // Página 12
+                    "https://8upload.com/image/7900bae6dba9acdf/Pag21__12_.webp",  // Página 13
+                    "https://8upload.com/image/200022328659b027/Pag21__8_.webp",  // Página 14
+                    "https://8upload.com/image/da9bb685e3521e68/Pag21__7_.webp",  // Página 15
+                    "https://8upload.com/image/d0aba1508d538958/Pag21__6_.webp",  // Página 16
+                    "https://8upload.com/image/e95aba700a279006/Pag21__5_.webp",  // Página 17
+                    "https://8upload.com/image/70c94ebce3f8a0ac/Pag18.webp",  // Página 18
+                    "https://8upload.com/image/c4f8ba70a636b439/Pag19.webp",  // Página 19
+                    "https://8upload.com/image/db999cbf891295ed/Pag21__22_.webp",  // Página 20
+                    "https://8upload.com/image/ad4b40e460a69c81/Pag21__2_.webp",  // Página 21
+                    "https://8upload.com/image/92390a6e330e5205/Pag21__3_.webp",  // Página 22
+                    "https://8upload.com/image/76d6d69f6995f11e/Pag21__4_.webp"  // Página 23
+                ],
+                type: "chapter"
+                  }
     ]
   },
   {
