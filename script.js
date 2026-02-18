@@ -1270,15 +1270,23 @@ function setupEventListeners() {
             submitBtn.disabled = true;
             this.classList.add('loading');
             
-            const formData = {
-                manga_name: document.getElementById('mangaName').value,
-                manga_link: document.getElementById('mangaLink').value,
-                user_name: document.getElementById('userName').value,
-                user_email: document.getElementById('userEmail').value || 'Não informado',
-                discord_user: `${user.username}#${user.discriminator}`,
-                discord_id: user.id,
-                timestamp: new Date().toLocaleString('pt-BR')
-            };
+            // Dentro do translationForm.addEventListener('submit'...
+
+const formData = {
+    manga_name: document.getElementById('mangaName').value,
+    manga_link: document.getElementById('mangaLink').value,
+    user_name: document.getElementById('userName').value,
+    user_email: document.getElementById('userEmail').value || 'Não informado',
+    // Ajuste aqui: Verifica se o discriminator existe, senão usa apenas o username
+    discord_user: user.discriminator && user.discriminator !== '0' 
+        ? `${user.username}#${user.discriminator}` 
+        : user.username,
+    discord_id: user.id,
+    timestamp: new Date().toLocaleString('pt-BR')
+};
+
+console.log("Dados que serão enviados ao EmailJS:", formData); 
+
             
             emailjs.send('service_739576a', 'template_8k5yeyj', formData)
                 .then(function(response) {
