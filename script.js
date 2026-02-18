@@ -1270,15 +1270,23 @@ function setupEventListeners() {
             submitBtn.disabled = true;
             this.classList.add('loading');
             
-            const formData = {
-                manga_name: document.getElementById('mangaName').value,
-                manga_link: document.getElementById('mangaLink').value,
-                user_name: document.getElementById('userName').value,
-                user_email: document.getElementById('userEmail').value || 'Não informado',
-                discord_user: `${user.username}#${user.discriminator}`,
-                discord_id: user.id,
-                timestamp: new Date().toLocaleString('pt-BR')
-            };
+            // Dentro do translationForm.addEventListener('submit'...
+
+const formData = {
+    manga_name: document.getElementById('mangaName').value,
+    manga_link: document.getElementById('mangaLink').value,
+    user_name: document.getElementById('userName').value,
+    user_email: document.getElementById('userEmail').value || 'Não informado',
+    // Ajuste aqui: Verifica se o discriminator existe, senão usa apenas o username
+    discord_user: user.discriminator && user.discriminator !== '0' 
+        ? `${user.username}#${user.discriminator}` 
+        : user.username,
+    discord_id: user.id,
+    timestamp: new Date().toLocaleString('pt-BR')
+};
+
+console.log("Dados que serão enviados ao EmailJS:", formData); 
+
             
             emailjs.send('service_739576a', 'template_8k5yeyj', formData)
                 .then(function(response) {
@@ -2001,29 +2009,45 @@ function showNotFound() {
 // FUNÇÕES DO SIDEBAR E FORMULÁRIO
 // ===============================
 
-function openRequestForm() {
+function openRequestForm(event) {
+    // 1. Impede que o clique dispare outras coisas no site
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     const user = checkAuth();
     if (!user) {
         showToast('<i class="fas fa-exclamation-triangle"></i> Faça login com Discord primeiro!');
-        toggleSidebar();
+        // Remova o toggleSidebar daqui se o toast já for visível
         return;
     }
     
-    closeModal();
-    toggleSidebar();
-    hideCarousel();
-    
-    const requestModal = document.getElementById('requestModal');
-    if (requestModal) {
-        requestModal.style.display = 'block';
+    // 2. Tente fechar a sidebar PRIMEIRO e verifique se ela não tem loops
+    const sidebar = document.getElementById('sidebar'); // ajuste para o ID correto
+    if (sidebar && sidebar.classList.contains('active')) {
+        toggleSidebar(); 
     }
-    
-    const userName = document.getElementById('userName');
-    const userEmail = document.getElementById('userEmail');
-    
-    if (userName) userName.value = user.global_name || user.username;
-    if (userEmail) userEmail.value = user.email || '';
+
+    // 3. Abra o modal com um pequeno atraso (delay) para permitir que a sidebar feche
+    setTimeout(() => {
+        const requestModal = document.getElementById('requestModal');
+        if (requestModal) {
+            requestModal.style.display = 'flex'; // Use flex se seu CSS de modal for flex
+            
+            // Preencher dados do usuário
+            const userName = document.getElementById('userName');
+            const userEmail = document.getElementById('userEmail');
+            
+            if (userName) userName.value = user.global_name || user.username;
+            if (userEmail) userEmail.value = user.email || '';
+            
+            // Bloquear o scroll da página atrás para evitar bugs
+            document.body.style.overflow = 'hidden';
+        }
+    }, 100); // 100ms de intervalo resolvem conflitos de renderização
 }
+
 
 function closeRequestForm() {
     const requestModal = document.getElementById('requestModal');
