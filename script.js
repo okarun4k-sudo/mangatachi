@@ -2036,6 +2036,9 @@ function setupMangaReaderEvents(manga, chapter) {
             }
         });
     }, 1000);
+    
+    // >>> ADICIONE ESTA LINHA AQUI <<<
+    setupReaderNavigation(manga, chapter);
 }
 
 // Mostrar página não encontrada
@@ -2643,3 +2646,70 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.head.insertAdjacentHTML('beforeend', searchStyles);
 });
+
+// ===============================
+// SISTEMA DE NAVEGAÇÃO DO LEITOR
+// ===============================
+
+function setupReaderNavigation(manga, currentChapter) {
+    // 1. Se for oneshot, não exibe botões
+    if (currentChapter.type === 'oneshot') return;
+
+    // 2. Coletar todos os capítulos normais para saber a ordem
+    let allChapters = [];
+    if (manga.chapters) allChapters.push(...manga.chapters);
+    if (manga.volumes) {
+        manga.volumes.forEach(vol => {
+            if (vol.chapters) allChapters.push(...vol.chapters);
+        });
+    }
+
+    // 3. Ordenar capítulos do menor para o maior (ex: 1, 2, 3...)
+    allChapters.sort((a, b) => parseFloat(a.chapterNumber) - parseFloat(b.chapterNumber));
+
+    // Se só houver 1 capítulo no total, age como oneshot e não mostra
+    if (allChapters.length <= 1) return;
+
+    // 4. Encontrar onde estamos na lista
+    const currentIndex = allChapters.findIndex(c => parseFloat(c.chapterNumber) === parseFloat(currentChapter.chapterNumber));
+    if (currentIndex === -1) return; 
+
+    const prevChapter = currentIndex > 0 ? allChapters[currentIndex - 1] : null;
+    const nextChapter = currentIndex < allChapters.length - 1 ? allChapters[currentIndex + 1] : null;
+
+    const container = document.querySelector('.manga-pages-container');
+    if (!container) return;
+
+    // 5. Criar o HTML dos botões
+    const navContainer = document.createElement('div');
+    navContainer.className = 'reader-navigation-footer';
+
+    // Botão Voltar
+    const btnPrev = document.createElement('button');
+    btnPrev.className = 'nav-btn-small';
+    btnPrev.innerHTML = '<i class="fas fa-chevron-left"></i> Voltar';
+    if (!prevChapter) {
+        btnPrev.disabled = true; // Deixa escuro e desativa
+    } else {
+        btnPrev.onclick = () => openReader('chapter', manga.id, prevChapter.chapterNumber);
+    }
+
+    // Botão Próximo
+    const btnNext = document.createElement('button');
+    btnNext.className = 'nav-btn-small';
+    btnNext.innerHTML = 'Próximo <i class="fas fa-chevron-right"></i>';
+    if (!nextChapter) {
+        btnNext.disabled = true; // Deixa escuro e desativa
+    } else {
+        btnNext.onclick = () => openReader('chapter', manga.id, nextChapter.chapterNumber);
+    }
+
+    navContainer.appendChild(btnPrev);
+    navContainer.appendChild(btnNext);
+    container.appendChild(navContainer);
+
+    // 6. Fazer os botões aparecerem após 3 segundos
+    setTimeout(() => {
+        navContainer.classList.add('visible');
+    }, 3000);
+}
