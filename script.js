@@ -1698,6 +1698,39 @@ function slugify(text) {
         .replace(/(^-|-$)+/g, '');
 }
 
+// Função para atualizar o SEO dinamicamente (JSON-LD)
+function updateMangaSEO(mangaData) {
+    // Remove o script de JSON-LD anterior, se existir
+    const oldScript = document.getElementById('manga-schema');
+    if (oldScript) oldScript.remove();
+    
+    // --- ADICIONE ESTA LINHA ABAIXO ---
+  document.title = `${mangaData.title} - MangaTachi`; 
+  // ---------------------------------
+
+    // Cria o novo objeto de dados estruturados
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "CreativeWorkSeries",
+        "name": mangaData.title,
+        "author": { "@type": "Person", "name": mangaData.author },
+        "image": mangaData.coverUrl,
+        "description": mangaData.description || mangaData.synopsis || "", // Ajustado para aceitar description ou synopsis
+        "url": window.location.href
+    };
+
+    // Injeta no <head>
+    const script = document.createElement('script');
+    script.id = 'manga-schema';
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(schemaData);
+    document.head.appendChild(script);
+    
+    console.log(`✅ SEO atualizado para: ${mangaData.title}`);
+}
+
+
+
 // ===============================
 // SISTEMA DE PÁGINAS SPA - ATUALIZADO
 // ===============================
@@ -1709,6 +1742,10 @@ function showMangaDetailPage(mangaSlug) {
         showNotFound();
         return;
     }
+    
+    // --- ADICIONE ESTA LINHA AQUI ---
+    updateMangaSEO(manga); 
+    // --------------------------------
 
     hideHeaderElements();
     hideMainContent();
