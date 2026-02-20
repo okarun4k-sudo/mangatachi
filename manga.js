@@ -270,7 +270,38 @@ const mangas = [
                     "https://8upload.com/image/76d6d69f6995f11e/Pag21__4_.webp"  // Página 23
                 ],
                 type: "chapter"
-            }
+            },
+                  {
+        "chapterNumber": 6,
+        "title": "A Voz que Chama",
+        "pages": [
+          "https://8upload.com/image/14eb948b496bf8ee/Pag1.webp",
+          "https://8upload.com/image/f462ffbe33efe254/Pag2.webp",
+          "https://8upload.com/image/e09af69c550c6850/Pag3.webp",
+          "https://8upload.com/image/a48cfeb67677f6e0/Pag4.webp",
+          "https://8upload.com/image/c23c9fcd84866343/Pag5.webp",
+          "https://8upload.com/image/893241fd41662203/Pag6.webp",
+          "https://8upload.com/image/a1bb02fe6b03eeeb/Pag7.webp",
+          "https://8upload.com/image/725baf0585aa6acf/Pag8.webp",
+          "https://8upload.com/image/59f0062390842116/Pag9.webp",
+          "https://8upload.com/image/372c97b40a772d1a/Pag10.webp",
+          "https://8upload.com/image/47d3735b57a14b28/Pag11.webp",
+          "https://8upload.com/image/eb7e8ab4cb5fe36a/Pag12.webp",
+          "https://8upload.com/image/e67a6d90e74d826d/Pag13.webp",
+          "https://8upload.com/image/c5a59fe7bafc2b63/Pag14.webp",
+          "https://8upload.com/image/0bbabcefb807773f/Pag15.webp",
+          "https://8upload.com/image/0ec7031c594bbcc8/Pag16.webp",
+          "https://8upload.com/image/28c47912000d4097/Pag17.webp",
+          "https://8upload.com/image/353b0c381858f461/Pag18.webp",
+          "https://8upload.com/image/8749770c436edfac/Pag19.webp",
+          "https://8upload.com/image/138a39e6c168a1c9/Pag20.webp",
+          "https://8upload.com/image/b7d7eedcb0ae49f4/Pag21.webp",
+          "https://8upload.com/image/32c17322458cd443/Pag22.webp",
+          "https://8upload.com/image/13289e5c29f92214/Pag23.webp"
+        ],
+        "type": "chapter"
+      }
+
 
         ]
     },
