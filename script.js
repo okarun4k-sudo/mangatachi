@@ -2713,3 +2713,23 @@ function setupReaderNavigation(manga, currentChapter) {
         navContainer.classList.add('visible');
     }, 3000);
 }
+
+
+// Gerenciador da animação de entrada
+function handleSplashScreen() {
+    const splash = document.getElementById('splash-screen');
+    if (splash) {
+        // Aguarda 3 segundos exatos antes de iniciar o fade out
+        setTimeout(() => {
+            splash.classList.add('fade-out');
+            
+            // Remove o elemento do DOM após a transição para não gastar recursos
+            setTimeout(() => {
+                splash.remove();
+            }, 600);
+        }, 3000);
+    }
+}
+
+// Inicializa a função
+handleSplashScreen();
