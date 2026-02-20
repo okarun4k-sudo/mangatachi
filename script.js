@@ -1698,36 +1698,57 @@ function slugify(text) {
         .replace(/(^-|-$)+/g, '');
 }
 
-// Função para atualizar o SEO dinamicamente (JSON-LD)
 function updateMangaSEO(mangaData) {
-    // Remove o script de JSON-LD anterior, se existir
+    const title = `${mangaData.title} - MangaTachi`;
+    const description = (mangaData.description || mangaData.synopsis || "").substring(0, 160);
+    const url = window.location.href;
+    const image = mangaData.coverUrl;
+
+    // 1. Atualiza o título da aba
+    document.title = title;
+
+    // 2. Atualiza JSON-LD (Schema.org)
     const oldScript = document.getElementById('manga-schema');
     if (oldScript) oldScript.remove();
-    
-    // --- ADICIONE ESTA LINHA ABAIXO ---
-  document.title = `${mangaData.title} - MangaTachi`; 
-  // ---------------------------------
-
-    // Cria o novo objeto de dados estruturados
-    const schemaData = {
+    const script = document.createElement('script');
+    script.id = 'manga-schema';
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify({
         "@context": "https://schema.org",
         "@type": "CreativeWorkSeries",
         "name": mangaData.title,
         "author": { "@type": "Person", "name": mangaData.author },
-        "image": mangaData.coverUrl,
-        "description": mangaData.description || mangaData.synopsis || "", // Ajustado para aceitar description ou synopsis
-        "url": window.location.href
+        "image": image,
+        "description": description,
+        "url": url
+    });
+    document.head.appendChild(script);
+
+    // 3. Atualiza Meta Tags Dinâmicas (Open Graph & Twitter)
+    const updateMeta = (property, content, isName = false) => {
+        const selector = isName ? `meta[name="${property}"]` : `meta[property="${property}"]`;
+        let meta = document.querySelector(selector);
+        if (!meta) {
+            meta = document.createElement('meta');
+            if (isName) meta.setAttribute('name', property);
+            else meta.setAttribute('property', property);
+            document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', content);
     };
 
-    // Injeta no <head>
-    const script = document.createElement('script');
-    script.id = 'manga-schema';
-    script.type = 'application/ld+json';
-    script.textContent = JSON.stringify(schemaData);
-    document.head.appendChild(script);
-    
-    console.log(`✅ SEO atualizado para: ${mangaData.title}`);
+    // Aplicando as atualizações
+    updateMeta('og:title', title);
+    updateMeta('og:description', description);
+    updateMeta('og:image', image);
+    updateMeta('og:url', url);
+    updateMeta('twitter:title', title);
+    updateMeta('twitter:description', description);
+    updateMeta('twitter:image', image);
+
+    console.log(`🚀 SEO e Social Media atualizados: ${mangaData.title}`);
 }
+
 
 
 
