@@ -3115,7 +3115,7 @@ body.search-active .modal {
 }
 
 
-/* ===== ANIMAÇÃO DE ENTRADA (LIVRO) ===== */
+/* ===== SPLASH SCREEN COM DEGRADÊ ANIMADO ===== */
 .splash-screen {
     position: fixed;
     top: 0;
@@ -3127,7 +3127,7 @@ body.search-active .modal {
     justify-content: center;
     align-items: center;
     z-index: 10000;
-    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.6s ease;
 }
 
 .splash-screen.fade-out {
@@ -3135,60 +3135,52 @@ body.search-active .modal {
     pointer-events: none;
 }
 
-.manga-animation-container {
-    text-align: center;
-}
-
-.manga-book-wrap {
-    position: relative;
-    font-size: 80px; /* Tamanho do livro */
-    color: var(--primary-color);
-    display: inline-block;
-}
-
-.base-book {
-    opacity: 0.3; /* Livro de fundo mais suave */
-}
-
-.flipping-page {
-    position: absolute;
-    top: 5%;
-    right: 5%;
-    width: 45%;
-    height: 90%;
-    background: var(--primary-color);
-    border-radius: 2px 5px 5px 2px;
-    transform-origin: left center;
-    animation: page-flip 1.2s infinite ease-in-out;
-    opacity: 0.8;
-}
-
-.flipping-page:nth-child(3) {
-    animation-delay: 0.6s;
-}
-
-@keyframes page-flip {
-    0% {
-        transform: perspective(400px) rotateY(0deg);
-    }
-    100% {
-        transform: perspective(400px) rotateY(-180deg);
-        opacity: 0;
-    }
-}
-
-.splash-text {
-    margin-top: 20px;
+.loading-text-gradient {
     font-family: 'Poppins', sans-serif;
-    color: var(--text-light);
-    letter-spacing: 3px;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 2px;
     text-transform: uppercase;
-    font-size: 0.9rem;
-    animation: text-pulse 1.5s infinite;
+    
+    /* Configuração do Degradê */
+    background: linear-gradient(to right, #1e88e5 20%, #ffffff 40%, #ffffff 60%, #1e88e5 80%);
+    background-size: 200% auto;
+    
+    /* Aplica o degradê ao texto */
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* Animação do brilho passando */
+    animation: shine 2s linear infinite;
 }
 
-@keyframes text-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+/* Estilo do ícone acima do texto */
+.splash-icon {
+    font-size: 40px; /* Tamanho do ícone */
+    color: var(--primary-color); /* Usa o azul do seu tema */
+    margin-bottom: 15px; /* Espaço entre o ícone e o texto */
+    display: block;
+    filter: drop-shadow(0 0 10px rgba(30, 136, 229, 0.5)); /* Brilho leve azul */
+    animation: icon-pulse 2s infinite ease-in-out;
+}
+
+/* Animação opcional para o ícone pulsar devagar */
+@keyframes icon-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+/* Garante que o container alinhe tudo no centro */
+.manga-animation-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }

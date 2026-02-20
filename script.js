@@ -1,5 +1,23 @@
 // CONSTANTES DO SISTEMA
 const SITE_VERSION = "3.0.2 (16)";
+
+// ==========================================
+// PROTEÇÃO CONTRA INSPEÇÃO E CÓPIA
+// ==========================================
+document.addEventListener('contextmenu', e => e.preventDefault()); // Bloqueia o clique direito
+
+document.onkeydown = function(e) {
+    // Bloqueia F12
+    if(e.keyCode == 123) return false;
+    // Bloqueia Ctrl+Shift+I (Inspecionar)
+    if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false;
+    // Bloqueia Ctrl+Shift+J (Console)
+    if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false;
+    // Bloqueia Ctrl+U (Ver código fonte)
+    if(e.ctrlKey && e.keyCode == 85) return false;
+};
+
+
 const DISCORD_SERVER_ID = "1403373682868359238";
 
 // Função para verificar se usuário está no servidor
@@ -2715,21 +2733,20 @@ function setupReaderNavigation(manga, currentChapter) {
 }
 
 
-// Gerenciador da animação de entrada
+// Gerenciador da animação de entrada (3 segundos)
 function handleSplashScreen() {
     const splash = document.getElementById('splash-screen');
     if (splash) {
-        // Aguarda 3 segundos exatos antes de iniciar o fade out
         setTimeout(() => {
             splash.classList.add('fade-out');
             
-            // Remove o elemento do DOM após a transição para não gastar recursos
+            // Remove o elemento do sistema após o efeito de sumir
             setTimeout(() => {
                 splash.remove();
             }, 600);
-        }, 3000);
+        }, 3000); // 3 segundos de espera
     }
 }
 
-// Inicializa a função
+// Executa assim que o script carregar
 handleSplashScreen();
