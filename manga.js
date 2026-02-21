@@ -66,7 +66,7 @@ const mangas = [
   "genres": ["Action", "Adventure", "Comedy", "Fantasy", "School Life"],
   "translationTeam": "Manga Tachi",
   "status": "Ongoing",
-  "coverUrl": "https://files.catbox.moe/r6udjq.jpg",
+  "coverUrl": "https://8upload.com/image/47046f6a03ef49e6/bf37408e-3bb6-41e2-8936-d287ceb5899d.jpg.512.jpg",
   "chapters": [
     {
       "chapterNumber": 1,
@@ -313,7 +313,7 @@ const mangas = [
     genres: ["Drama", "Fantasia", "Isekai", "Reencarnação"],
     translationTeam: "MangaRoom",
     status: "Em andamento",
-    coverUrl: "https://files.catbox.moe/xepw0c.jpg",
+    coverUrl: "https://8upload.com/image/75b312dfaee547ec/62765266-3a61-4e14-a2ba-4da50829e603.jpg.512.jpg",
     chapters: [
         {
             chapterNumber: 1,
@@ -999,7 +999,7 @@ const mangas = [
     genres: ["Ação", "Ficção científica", "Super-herói"],
     translationTeam: "MangaRoom & Pinto ",
     status: "Em andamento",
-    coverUrl: "https://files.catbox.moe/sdfc7n.jpg",
+    coverUrl: "https://8upload.com/image/44efb9ed7848a32d/39777271-bc18-4e68-a476-928a7cdaa2e4.jpg.512.jpg",
     chapters: [
         {
             chapterNumber: 1,
@@ -1443,7 +1443,30 @@ const mangas = [
                         "https://files.catbox.moe/9bbfr1.jpg" // página_017.jpg
                     ],
                     type: "chapter"
-                }
+                },
+                      {
+        "chapterNumber": 3.1,
+        "title": "Zombaria Cartunesca",
+        "pages": [
+          "https://8upload.com/image/d028bf4557be7e8e/Pag-1.webp",
+          "https://8upload.com/image/ed2c7f67b97fe32a/Pag-2.webp",
+          "https://8upload.com/image/e04b1be005aef8e4/Pag-3.webp",
+          "https://8upload.com/image/9895b9261ebe770e/Pag-4.webp",
+          "https://8upload.com/image/b694c0aad9039d4b/Pag-5.webp",
+          "https://8upload.com/image/25c4730ef610f5af/Pag-6.webp",
+          "https://8upload.com/image/deedb7efa2dc4e57/Pag-7.webp",
+          "https://8upload.com/image/2afa9190f7c8a690/Pag-8.webp",
+          "https://8upload.com/image/932b44e5202ffe49/Pag-9.webp",
+          "https://8upload.com/image/ac0b7e6d350ab9d7/Pag-10.webp",
+          "https://8upload.com/image/913b6ee33bfb25bf/Pag-11.webp",
+          "https://8upload.com/image/1c00dff5d13484a2/Pag-12.webp",
+          "https://8upload.com/image/54d52a262987691b/Pag-13.webp",
+          "https://8upload.com/image/019984d10fbcc6f4/Pag-14.webp",
+          "https://8upload.com/image/8ee5d958c9cf7974/Pag-15.webp"
+        ],
+        "type": "chapter"
+      }
+
             ]
         }, 
 
