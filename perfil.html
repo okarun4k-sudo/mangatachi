@@ -8,365 +8,225 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
-        /* MANTENDO O ESTILO PROFISSIONAL ORIGINAL */
-        .profile-container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
-        
-        /* Header Profile */
-        .profile-header {
-            display: flex; gap: 4rem; margin-bottom: 3rem; padding: 2rem;
-            background: var(--background-card); border-radius: 16px;
-            box-shadow: var(--card-shadow); border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative; overflow: hidden;
-            animation: fadeIn 0.6s ease-out;
-        }
-        .profile-header::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+        body { background-color: var(--background-dark); color: var(--text-light); }
+
+        .profile-wrapper {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            animation: fadeIn 0.5s ease;
         }
 
-        /* Avatar */
-        .profile-avatar-container { flex-shrink: 0; position: relative; }
-        .profile-avatar {
-            width: 160px; height: 160px; border-radius: 50%; object-fit: cover;
-            border: 4px solid var(--primary-color); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease;
+        /* Card Principal */
+        .profile-card {
+            background: var(--background-card);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+            box-shadow: var(--shadow);
         }
-        .profile-avatar:hover { transform: scale(1.05); }
 
-        /* Info Text */
-        .profile-info-main { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .profile-username {
-            font-size: 2rem; font-weight: 700; color: var(--text-light); margin: 0;
-            background: linear-gradient(135deg, var(--text-light), var(--primary-color));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        .avatar-container {
+            position: relative;
+            padding: 5px;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            border-radius: 50%;
         }
-        
-        /* Badges */
-        .profile-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
-        .profile-badge {
-            display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.4rem 0.8rem;
-            border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
-        }
-        .badge-premium { background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; }
-        .badge-verified { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; }
-        .badge-member { background: linear-gradient(135deg, #2196F3, #1976D2); color: white; }
 
-        /* Stats Grid */
+        #userAvatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid var(--background-card);
+            object-fit: cover;
+        }
+
+        .user-info h1 { font-size: 24px; margin-bottom: 5px; }
+        .user-info p { color: var(--text-gray); font-size: 14px; }
+
+        /* Status Grid */
         .profile-stats {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 1.5rem; margin-top: 1.5rem; padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.05); border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            margin-top: 10px;
         }
-        .stat-item { text-align: center; }
-        .stat-number { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); display: block; }
-        .stat-label { font-size: 0.85rem; color: var(--text-gray); }
 
-        /* Sections */
-        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .info-section {
-            background: var(--background-card); border-radius: 16px; padding: 2rem;
-            box-shadow: var(--card-shadow); border: 1px solid rgba(255, 255, 255, 0.1);
+        .stat-item {
+            background: var(--background-hover);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
-        .section-title { font-size: 1.4rem; font-weight: 700; color: var(--text-light); margin-bottom: 1.5rem; border-bottom: 2px solid rgba(255, 255, 255, 0.1); padding-bottom: 0.5rem; }
-        
-        .info-item {
-            display: flex; justify-content: space-between; padding: 1rem;
-            background: rgba(255, 255, 255, 0.05); border-radius: 10px; margin-bottom: 1rem;
-            border-left: 4px solid var(--primary-color);
-        }
-        .info-value { color: var(--text-light); font-weight: 500; }
 
-        /* Liked Mangas Grid */
-        .liked-mangas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
-        .liked-manga-card {
-            background: rgba(255, 255, 255, 0.05); border-radius: 12px; overflow: hidden;
-            cursor: pointer; transition: transform 0.3s; border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .liked-manga-card:hover { transform: translateY(-5px); border-color: var(--primary-color); }
-        .liked-manga-cover { width: 100%; height: 200px; object-fit: cover; }
-        .liked-manga-title { padding: 0.5rem; font-size: 0.85rem; text-align: center; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .stat-item span { font-size: 12px; color: var(--text-gray); text-transform: uppercase; }
+        .stat-item b { font-size: 18px; color: var(--primary-color); }
 
-        /* Achievements */
-        .achievements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem; }
-        .achievement-card {
-            background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1rem;
-            text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s;
+        /* Seção de Curtidas */
+        .liked-section { margin-top: 40px; }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
         }
-        .achievement-card.locked { opacity: 0.5; filter: grayscale(1); }
-        .achievement-card.unlocked { border-color: var(--primary-color); background: rgba(30, 136, 229, 0.1); }
-        .achievement-icon { font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color); }
-        
-        /* Buttons */
-        .btn-action {
-            padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer;
-            display: flex; align-items: center; gap: 0.5rem; transition: 0.3s;
-        }
-        .btn-logout { background: rgba(220, 53, 69, 0.2); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.3); }
-        .btn-logout:hover { background: rgba(220, 53, 69, 0.3); transform: translateY(-2px); }
 
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .profile-header { flex-direction: column; text-align: center; gap: 1.5rem; }
-            .profile-avatar { margin: 0 auto; }
-            .profile-badges { justify-content: center; }
-            .info-grid { grid-template-columns: 1fr; }
+        .manga-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
         }
+
+        .manga-card-mini {
+            background: var(--background-card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .manga-card-mini:hover { transform: translateY(-5px); }
+        .manga-card-mini img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
+        .manga-card-mini .title {
+            padding: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Botões */
+        .profile-actions { display: flex; gap: 10px; width: 100%; }
+        .btn-profile {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        .btn-back { background: var(--background-hover); color: var(--text-light); }
+        .btn-logout { background: #ff4d4d20; color: #ff4d4d; }
+        .btn-logout:hover { background: #ff4d4d; color: white; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <button onclick="window.location.href='index.html'" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> Voltar
+
+    <div class="profile-wrapper">
+        <div class="profile-card">
+            <div class="avatar-container">
+                <img id="userAvatar" src="https://via.placeholder.com/150" alt="Avatar">
+            </div>
+            
+            <div class="user-info">
+                <h1 id="userName">Carregando...</h1>
+                <p id="userEmail">Usuário MangaTachi</p>
+            </div>
+
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <span>Mangás Curtidos</span>
+                    <b id="countLikes">0</b>
+                </div>
+                <div class="stat-item">
+                    <span>Nível</span>
+                    <b>Membro</b>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <button class="btn-profile btn-back" onclick="window.location.href='index.html'">
+                    <i class="fas fa-home"></i> Início
                 </button>
-                <h1 class="logo"><i class="fas fa-book"></i> MangaTachi</h1>
-                <div style="width: 40px;"></div>
+                <button class="btn-profile btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
             </div>
         </div>
-    </header>
 
-    <main class="main-content">
-        <div class="container">
-            <div class="profile-container">
-                
-                <div class="profile-header">
-                    <div class="profile-avatar-container">
-                        <img id="profileAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="profile-avatar">
-                    </div>
-                    
-                    <div class="profile-info-main">
-                        <div class="profile-username-section">
-                            <h1 id="profileUsername" class="profile-username">Carregando...</h1>
-                            <div class="profile-badges" id="profileBadges">
-                                </div>
-                        </div>
-                        
-                        <div class="profile-actions" style="margin-top: 1rem; display: flex; gap: 10px; justify-content: flex-start;">
-                             <button onclick="logout()" class="btn-action btn-logout">
-                                <i class="fas fa-sign-out-alt"></i> Sair
-                            </button>
-                        </div>
-                        
-                        <div class="profile-stats">
-                            <div class="stat-item">
-                                <span id="statLikes" class="stat-number">0</span>
-                                <span class="stat-label">Curtidos</span>
-                            </div>
-                            <div class="stat-item">
-                                <span id="statRead" class="stat-number">0</span>
-                                <span class="stat-label">Lidos</span>
-                            </div>
-                            <div class="stat-item">
-                                <span id="statDays" class="stat-number">0</span>
-                                <span class="stat-label">Dias de Conta</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="info-grid">
-                    <div class="info-section">
-                        <h2 class="section-title"><i class="fas fa-user-cog"></i> Detalhes da Conta</h2>
-                        <div class="info-item">
-                            <span class="info-label"><i class="fas fa-id-card"></i> Discord ID</span>
-                            <span id="infoId" class="info-value">-</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label"><i class="fas fa-envelope"></i> Email</span>
-                            <span id="infoEmail" class="info-value">•••••••</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label"><i class="fas fa-trophy"></i> Nível</span>
-                            <span id="userLevel" class="info-value">Iniciante</span>
-                        </div>
-                    </div>
-
-                    <div class="info-section">
-                        <h2 class="section-title"><i class="fas fa-medal"></i> Conquistas</h2>
-                        <div id="achievementsContainer" class="achievements-grid">
-                            </div>
-                    </div>
-                </div>
-
-                <div class="liked-mangas-section info-section">
-                    <h2 class="section-title"><i class="fas fa-heart"></i> Mangás Curtidos</h2>
-                    <div id="likedMangasContainer" class="liked-mangas-grid">
-                        <div style="grid-column: 1/-1; text-align: center; color: var(--text-gray); padding: 2rem;">
-                            <i class="fas fa-spinner fa-spin"></i> Carregando curtidas...
-                        </div>
-                    </div>
-                </div>
-
-                <div class="version-footer" id="versionFooter" style="text-align: center; margin-top: 3rem; color: var(--text-gray); font-size: 0.9rem;">
-                    </div>
-
+        <div class="liked-section">
+            <div class="section-title">
+                <i class="fas fa-heart" style="color: #ff4d4d;"></i>
+                Minha Biblioteca
             </div>
+            <div id="likedMangasGrid" class="manga-grid">
+                </div>
         </div>
-    </main>
+    </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
-    
-    <script src="mangas_data.js"></script> 
-    <script src="script.js"></script>
-
-    <script>
-        // Definição local de conquistas (Sincronizada com a lógica visual)
-        const ACHIEVEMENTS = [
-            { id: 'login', name: "Bem-vindo", desc: "Fazer login pela primeira vez", icon: "fa-user", condition: () => true },
-            { id: 'reader_1', name: "Leitor Curioso", desc: "Ler 1 mangá", icon: "fa-book-open", condition: (stats) => stats.readCount >= 1 },
-            { id: 'liker_5', name: "Fã de Mangá", desc: "Curtir 5 mangás", icon: "fa-heart", condition: (stats) => stats.likesCount >= 5 },
-            { id: 'veteran', name: "Veterano", desc: "Conta com mais de 30 dias", icon: "fa-crown", condition: (stats) => stats.daysSince > 30 },
-            { id: 'super_liker', name: "Colecionador", desc: "Curtir 20 mangás", icon: "fa-star", condition: (stats) => stats.likesCount >= 20 }
-        ];
-
-        document.addEventListener('DOMContentLoaded', async function() {
-            // 1. Verificar Autenticação usando localStorage (padrão do script.js)
-            const userDataStr = localStorage.getItem('discordUser');
-            if (!userDataStr) {
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script src="script.js"></script> <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('discordUser'));
+            
+            if (!user) {
                 window.location.href = 'index.html';
                 return;
             }
-            const user = JSON.parse(userDataStr);
 
-            // 2. Preencher Header
-            document.getElementById('profileUsername').textContent = user.username;
-            document.getElementById('profileAvatar').src = user.avatar 
-                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=256` 
-                : 'https://cdn.discordapp.com/embed/avatars/0.png';
+            // Preenche dados básicos
+            document.getElementById('userName').innerText = user.username;
+            document.getElementById('userAvatar').src = user.avatar 
+                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+                : 'https://files.catbox.moe/0rjf4e.png';
             
-            // Info Detalhada
-            document.getElementById('infoId').textContent = user.id;
-            document.getElementById('infoEmail').textContent = user.email || 'Oculto';
-            
-            // Versão
-            if (typeof SITE_VERSION !== 'undefined') {
-                document.getElementById('versionFooter').textContent = `MangaTachi v${SITE_VERSION}`;
-            }
-
-            // 3. Calcular Dias de Conta
-            const joinDate = new Date(user.created_at || Date.now()); // Fallback se created_at não existir
-            const now = new Date();
-            const diffTime = Math.abs(now - joinDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-            document.getElementById('statDays').textContent = diffDays;
-
-            // 4. Carregar Curtidas do Firebase
-            // Nota: script.js inicializa 'firebaseAppLikes'. Vamos usá-lo.
-            let userLikesCount = 0;
-            let likedMangasIds = [];
-
-            try {
-                // Se firebaseAppLikes não estiver disponível globalmente ainda, tenta acessar via firebase.app
-                const app = firebaseAppLikes || firebase.app('likes'); 
-                const db = firebase.database(app);
-                
-                // Estrutura do firebase no script.js é: likes -> mangaId -> userId -> { data }
-                // Precisamos iterar todos os mangás para achar os likes deste usuário
-                // (Nota: Idealmente o firebase teria um nó users -> likes, mas vamos seguir a estrutura do script.js)
-                const likesRef = db.ref('likes');
-                const snapshot = await likesRef.once('value');
-
-                if (snapshot.exists()) {
-                    snapshot.forEach((mangaSnap) => {
-                        if (mangaSnap.hasChild(user.id)) {
-                            userLikesCount++;
-                            likedMangasIds.push(mangaSnap.key); // Guarda o ID do mangá
-                        }
-                    });
-                }
-            } catch (error) {
-                console.error("Erro ao carregar likes:", error);
-            }
-
-            // Atualiza UI de Likes
-            document.getElementById('statLikes').textContent = userLikesCount;
-            renderLikedMangas(likedMangasIds);
-
-            // 5. Histórico de Leitura (Mock ou LocalStorage)
-            // Assumindo que o script.js possa salvar em 'readingHistory' ou similar
-            const history = JSON.parse(localStorage.getItem('manga_history') || '[]');
-            const readCount = history.length;
-            document.getElementById('statRead').textContent = readCount;
-
-            // 6. Calcular Nível
-            let level = "Iniciante";
-            if (userLikesCount > 5) level = "Intermediário";
-            if (userLikesCount > 20) level = "Expert";
-            if (diffDays > 365) level = "Mestre";
-            document.getElementById('userLevel').textContent = level;
-
-            // 7. Renderizar Badges
-            const badgesContainer = document.getElementById('profileBadges');
-            let badgesHTML = '<span class="profile-badge badge-member"><i class="fas fa-user"></i> Membro</span>';
-            
-            if (user.verified) badgesHTML += '<span class="profile-badge badge-verified"><i class="fas fa-check"></i> Verificado</span>';
-            if (diffDays > 100) badgesHTML += '<span class="profile-badge badge-premium"><i class="fas fa-crown"></i> Veterano</span>';
-            
-            badgesContainer.innerHTML = badgesHTML;
-
-            // 8. Renderizar Conquistas
-            const stats = { likesCount: userLikesCount, readCount: readCount, daysSince: diffDays };
-            const achievementsContainer = document.getElementById('achievementsContainer');
-            
-            achievementsContainer.innerHTML = ACHIEVEMENTS.map(achiv => {
-                const isUnlocked = achiv.condition(stats);
-                return `
-                    <div class="achievement-card ${isUnlocked ? 'unlocked' : 'locked'}">
-                        <div class="achievement-icon"><i class="fas ${achiv.icon}"></i></div>
-                        <div style="font-weight:bold; font-size:0.8rem; color:var(--text-light)">${achiv.name}</div>
-                        <div style="font-size:0.7rem; color:var(--text-gray)">${achiv.desc}</div>
-                    </div>
-                `;
-            }).join('');
+            // Carrega mangás curtidos usando a lógica do seu script.js
+            loadLikedMangas();
         });
 
-        // Função para Renderizar Grid de Mangás Curtidos
-        function renderLikedMangas(ids) {
-            const container = document.getElementById('likedMangasContainer');
+        async function loadLikedMangas() {
+            const likedIds = JSON.parse(localStorage.getItem('likedMangas') || '[]');
+            const container = document.getElementById('likedMangasGrid');
+            const countDisplay = document.getElementById('countLikes');
             
-            if (ids.length === 0) {
-                container.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; color: var(--text-gray); padding: 2rem;">
-                        <i class="far fa-heart" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                        <p>Você ainda não curtiu nenhum mangá.</p>
-                    </div>`;
+            countDisplay.innerText = likedIds.length;
+
+            if (likedIds.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-gray)">Você ainda não curtiu nenhum mangá.</p>';
                 return;
             }
 
-            // Precisamos da variável global 'mangas' (normalmente em mangas_data.js ou script.js)
-            // Se ela não existir, mostramos um erro amigável ou tentamos buscar do script.js se exposto
-            const mangasData = (typeof mangas !== 'undefined') ? mangas : [];
-
-            const html = ids.map(id => {
-                // Tenta achar o mangá pelo ID (convertendo para string/int para garantir)
-                const manga = mangasData.find(m => m.id == id);
-                
-                if (manga) {
-                    return `
-                        <div class="liked-manga-card" onclick="window.location.href='index.html#/obras/${generateSlug(manga.title)}'">
-                            <img src="${manga.coverUrl}" class="liked-manga-cover" loading="lazy">
-                            <div class="liked-manga-title">${manga.title}</div>
-                        </div>
-                    `;
-                }
-                return ''; // Mangá não encontrado nos dados locais
-            }).join('');
-
-            container.innerHTML = html || '<p style="padding:1rem">Mangás indisponíveis no momento.</p>';
+            // Pega a lista de mangás global definida no seu script.js
+            // Se o script.js estiver carregado, a variável 'mangas' deve estar disponível
+            if (typeof mangas !== 'undefined') {
+                const html = likedIds.map(id => {
+                    const manga = mangas.find(m => m.id == id);
+                    if (manga) {
+                        return `
+                            <div class="manga-card-mini" onclick="window.location.href='index.html#/obras/${generateSlug(manga.title)}'">
+                                <img src="${manga.coverUrl}" alt="${manga.title}">
+                                <div class="title">${manga.title}</div>
+                            </div>
+                        `;
+                    }
+                    return '';
+                }).join('');
+                container.innerHTML = html;
+            }
         }
 
-        // Helper para gerar slug (igual ao do script.js)
         function generateSlug(text) {
-            return text.toLowerCase()
-                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/(^-|-$)+/g, '');
+            return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         }
 
         function logout() {
