@@ -2790,11 +2790,6 @@ function handleSplashScreen() {
 handleSplashScreen();
 
 
-
-// ===============================
-// SISTEMA DE COMENTÁRIOS
-// ===============================
-
 // ==========================================
 // SISTEMA AVANÇADO DE COMENTÁRIOS
 // ==========================================
@@ -2942,58 +2937,119 @@ function renderSingleComment(c, allList, user, mangaId, isReply = false) {
 }
 
 
-// Carrega os comentários daquele mangá específico
+// Função principal para carregar e organizar a lista
 async function loadComments(mangaId) {
-    const commentsList = document.getElementById('commentsList');
-    if (!commentsList) return;
-
+    const listDiv = document.getElementById('commentsList');
+    if (!listDiv) return;
+    
+    const user = JSON.parse(localStorage.getItem('discordUser'));
+    
     try {
-        // Busca os comentários referentes a este mangá específico, ordenados pela data
         const snapshot = await dbComments.collection("comentarios")
             .where("mangaId", "==", String(mangaId))
-            .orderBy("timestamp", "desc")
+            .orderBy("timestamp", "desc") // Principais no topo
             .get();
 
-        if (snapshot.empty) {
-            commentsList.innerHTML = '<div class="loading-comments">Seja o primeiro a comentar!</div>';
-            return;
-        }
+        const allComments = [];
+        snapshot.forEach(doc => allComments.push({id: doc.id, ...doc.data()}));
 
+        // Filtra os comentários principais (sem parentId)
+        const mainComments = allComments.filter(c => !c.parentId);
+        
         let html = '';
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            // Formata a data se ela existir no servidor
-            const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString('pt-BR', {
-                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-            }) : 'Agora mesmo';
-
-            html += `
-                <div class="comment-item">
-                    <img src="${data.userAvatar}" alt="Avatar" class="comment-avatar">
-                    <div class="comment-content">
-                        <div class="comment-header">
-                            <span class="comment-author">${data.userName}</span>
-                            <span class="comment-date">${date}</span>
-                        </div>
-                        <div class="comment-text">${data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
-                    </div>
-                </div>
-            `;
+        mainComments.forEach(c => {
+            html += renderSingleComment(c, allComments, user, mangaId);
         });
 
-        commentsList.innerHTML = html;
-    } catch (error) {
-        console.error("Erro ao buscar comentários:", error);
-        
-        // Trata erro de índice do Firebase (Muito Comum!)
-        if(error.message.includes("index")) {
-            console.error("VOCÊ PRECISA CRIAR O ÍNDICE NO FIREBASE! CLIQUE NO LINK DE ERRO GERADO NO CONSOLE.");
-            commentsList.innerHTML = '<div class="loading-comments" style="color: red;">O desenvolvedor precisa ativar os índices no Firebase (veja o console do navegador).</div>';
-        } else {
-            commentsList.innerHTML = '<div class="loading-comments">Erro ao carregar comentários.</div>';
-        }
+        listDiv.innerHTML = html || '<div class="loading-comments">Nenhum comentário. Seja o primeiro!</div>';
+    } catch (e) { 
+        console.error(e);
+        listDiv.innerHTML = '<div class="loading-comments">Erro ao carregar comentários. Verifique o console.</div>';
     }
 }
+
+// Função que gera o HTML de cada comentário (e suas respostas)
+function renderSingleComment(c, allComments, user, mangaId) {
+    const isOwner = user && user.id === c.userId;
+    const likesCount = c.likes ? c.likes.length : 0;
+    const isLiked = user && c.likes && c.likes.includes(user.id);
+    
+    // Formata a data
+    const date = c.timestamp ? new Date(c.timestamp.toDate()).toLocaleDateString('pt-BR', {
+        day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+    }) : 'Enviando...';
+
+    // Busca respostas para este comentário
+    const replies = allComments.filter(r => r.parentId === c.id).sort((a,b) => a.timestamp - b.timestamp);
+
+    return `
+        <div class="comment-item ${c.parentId ? 'comment-reply' : ''}" id="comment-${c.id}">
+            <img src="${c.userAvatar}" class="comment-avatar">
+            <div class="comment-content">
+                <div class="comment-header">
+                    <span class="comment-author">${c.userName}</span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="comment-date">${date}</span>
+                        
+                        <div class="comment-options">
+                            <div class="dots-icon" onclick="toggleMenu('${c.id}')">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                            <div id="menu-${c.id}" class="comment-menu">
+                                <div class="comment-menu-item" onclick="toggleReplyInput('${c.id}')">
+                                    <i class="fas fa-reply"></i> Responder
+                                </div>
+                                ${isOwner ? `
+                                    <div class="comment-menu-item" onclick="editComment('${c.id}', '${c.text}', '${mangaId}')">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </div>
+                                    <div class="comment-menu-item item-delete" onclick="deleteComment('${c.id}', '${mangaId}')">
+                                        <i class="fas fa-trash"></i> Apagar
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-text">${c.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+
+                <div class="comment-actions">
+                    <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${c.id}', '${mangaId}')">
+                        <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> ${likesCount}
+                    </button>
+                </div>
+
+                <div id="reply-container-${c.id}" class="reply-input-container" style="display:none; margin-top:10px;">
+                    <textarea id="replyInput-${c.id}" placeholder="Escreva sua resposta..."></textarea>
+                    <div style="display:flex; justify-content: flex-end; gap: 5px; margin-top:5px;">
+                        <button class="btn-cancel" onclick="toggleReplyInput('${c.id}')">Cancelar</button>
+                        <button class="btn-send" onclick="submitComment('${mangaId}', '${c.id}')">Responder</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="replies-wrapper">
+            ${replies.map(r => renderSingleComment(r, allComments, user, mangaId)).join('')}
+        </div>
+    `;
+}
+
+// Função para abrir/fechar o menu de três pontinhos
+function toggleMenu(id) {
+    const allMenus = document.querySelectorAll('.comment-menu');
+    allMenus.forEach(m => {
+        if (m.id !== `menu-${id}`) m.classList.remove('show');
+    });
+    document.getElementById(`menu-${id}`).classList.toggle('show');
+}
+
+// Fecha o menu se clicar fora dele
+window.addEventListener('click', (e) => {
+    if (!e.target.closest('.comment-options')) {
+        document.querySelectorAll('.comment-menu').forEach(m => m.classList.remove('show'));
+    }
+});
 
 // Por fim, injetar o carregamento quando a página de detalhes abre
 // Vamos substituir a função original setupMangaDetailEvents para chamar os comentários:
@@ -3002,3 +3058,59 @@ setupMangaDetailEvents = function(manga) {
     originalSetupMangaDetailEvents(manga);
     loadComments(manga.id);
 };
+
+
+// 1. Mostrar/Esconder o menu
+function toggleMenu(id) {
+    // Fecha outros menus abertos antes de abrir o novo
+    document.querySelectorAll('.comment-menu').forEach(menu => {
+        if(menu.id !== `menu-${id}`) menu.classList.remove('show');
+    });
+    document.getElementById(`menu-${id}`).classList.toggle('show');
+}
+
+// 2. Apagar comentário
+async function deleteComment(id, mangaId) {
+    if(!confirm("Tem certeza que deseja apagar seu comentário?")) return;
+    
+    try {
+        await dbComments.collection("comentarios").doc(id).delete();
+        showToast("🗑️ Comentário removido!");
+        loadComments(mangaId); // Recarrega a lista
+    } catch (e) {
+        showToast("❌ Erro ao apagar.");
+    }
+}
+
+// 3. Editar comentário
+async function editComment(id, oldText, mangaId) {
+    const newText = prompt("Edite seu comentário:", oldText);
+    if (!newText || newText === oldText) return;
+
+    try {
+        await dbComments.collection("comentarios").doc(id).update({
+            text: newText,
+            edited: true // Opcional: marca que foi editado
+        });
+        showToast("✏️ Comentário editado!");
+        loadComments(mangaId);
+    } catch (e) {
+        showToast("❌ Erro ao editar.");
+    }
+}
+
+// 4. Responder (Simples: menciona o nome no input)
+function replyComment(name) {
+    const input = document.getElementById('commentInput');
+    input.value = `@${name} `;
+    input.focus();
+    // Fecha o menu após clicar
+    document.querySelectorAll('.comment-menu').forEach(menu => menu.classList.remove('show'));
+}
+
+// Fecha o menu se clicar fora dele
+window.onclick = function(event) {
+    if (!event.target.matches('.dots-icon') && !event.target.matches('.fa-ellipsis-v')) {
+        document.querySelectorAll('.comment-menu').forEach(menu => menu.classList.remove('show'));
+    }
+}

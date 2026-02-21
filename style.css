@@ -3371,3 +3371,134 @@ body.search-active .modal {
     margin-top: 10px;
     display: none; /* Aparece via JS */
 }
+
+
+
+/* Container do Menu de Três Pontinhos */
+.comment-options {
+    position: relative;
+    cursor: pointer;
+}
+
+.dots-icon {
+    padding: 5px 10px;
+    color: var(--text-gray);
+    font-size: 1.2rem;
+    transition: 0.3s;
+}
+
+.dots-icon:hover {
+    color: var(--primary-color);
+}
+
+/* O Menu que aparece ao clicar */
+.comment-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 30px;
+    background: var(--background-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 100;
+    min-width: 120px;
+    overflow: hidden;
+}
+
+.comment-menu.show {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+.comment-menu-item {
+    padding: 10px 15px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+.comment-menu-item:hover {
+    background: var(--background-hover);
+    color: var(--primary-color);
+}
+
+.item-delete { color: #ff5252; }
+.item-delete:hover { background: rgba(255, 82, 82, 0.1); color: #ff5252; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* Ajustes de Layout */
+.comment-actions { margin-top: 8px; display: flex; gap: 15px; }
+
+.like-btn {
+    background: none;
+    border: none;
+    color: var(--text-gray);
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.2s;
+}
+
+.like-btn.liked { color: #ff5252; }
+.like-btn:hover { opacity: 0.8; }
+
+/* Menu de Opções (Três Pontinhos) */
+.comment-options { position: relative; }
+.dots-icon { cursor: pointer; color: var(--text-gray); padding: 0 5px; }
+
+.comment-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 25px;
+    background: var(--background-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 1000;
+    min-width: 140px;
+}
+
+.comment-menu.show { display: block; }
+
+.comment-menu-item {
+    padding: 10px 15px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-light);
+}
+
+.comment-menu-item:hover { background: var(--background-hover); }
+.item-delete { color: #ff5252 !important; }
+
+/* Recuo para Respostas */
+.replies-wrapper { margin-left: 40px; border-left: 2px solid var(--border-color); }
+
+/* Campo de Resposta */
+.reply-input-container textarea {
+    width: 100%;
+    background: var(--background-hover);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-light);
+    padding: 10px;
+    font-family: inherit;
+    resize: none;
+}
+
+.btn-send { background: var(--primary-color); color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+.btn-cancel { background: none; border: none; color: var(--text-gray); cursor: pointer; }
