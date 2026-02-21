@@ -2794,7 +2794,47 @@ handleSplashScreen();
 // SISTEMA AVANÇADO DE COMENTÁRIOS
 // ==========================================
 
-// Enviar comentário ou resposta
+/* ==================================================================
+   SISTEMA DE COMENTÁRIOS (MODERNIZADO COM MODAIS)
+   ================================================================== */
+
+// Variáveis globais para controlar qual comentário está sendo editado/apagado
+let commentIdToDelete = null;
+let commentIdToEdit = null;
+
+// --- FUNÇÕES DOS MODAIS ---
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+}
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+    // Limpa as variáveis globais ao fechar
+    commentIdToDelete = null;
+    commentIdToEdit = null;
+}
+
+// Configura os botões de confirmação dos modais (roda uma vez ao carregar)
+document.addEventListener('DOMContentLoaded', () => {
+    // Botão Confirmar Exclusão
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+        if (commentIdToDelete && currentMangaIdForComments) {
+            await executeDeleteComment(commentIdToDelete, currentMangaIdForComments);
+            closeModal('deleteModal');
+        }
+    });
+    // Botão Confirmar Edição
+    document.getElementById('confirmEditBtn').addEventListener('click', async () => {
+        const newText = document.getElementById('editModalTextarea').value.trim();
+        if (commentIdToEdit && currentMangaIdForComments && newText) {
+            await executeEditComment(commentIdToEdit, newText, currentMangaIdForComments);
+            closeModal('editModal');
+        }
+    });
+});
+
+// --- FUNÇÕES PRINCIPAIS ---
+
+// 1. Enviar Comentário/Resposta
 async function submitComment(mangaId, parentId = null) {
     const user = JSON.parse(localStorage.getItem('discordUser'));
     if (!user) return showToast('⚠️ Faça login com o Discord!');
@@ -2802,41 +2842,34 @@ async function submitComment(mangaId, parentId = null) {
     const idInput = parentId ? `replyInput-${parentId}` : 'commentInput';
     const inputArea = document.getElementById(idInput);
     const text = inputArea.value.trim();
-
     if (!text) return;
 
     try {
-        const avatarUrl = user.avatar 
-            ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
-            : 'https://cdn.discordapp.com/embed/avatars/0.png';
-
+        const avatarUrl = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png';
         await dbComments.collection("comentarios").add({
             mangaId: String(mangaId),
             userId: user.id,
             userName: user.global_name || user.username,
             userAvatar: avatarUrl,
             text: text,
-            parentId: parentId, // Se for null, é comentário principal. Se tiver ID, é resposta.
-            likes: [], // Array de IDs de quem curtiu
+            parentId: parentId,
+            likes: [],
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-
         inputArea.value = '';
-        if(parentId) toggleReplyInput(parentId); // Esconde o campo se for resposta
+        if(parentId) toggleReplyInput(parentId); // Fecha a caixa de resposta
         showToast('✅ Enviado!');
         loadComments(mangaId);
-    } catch (e) { showToast('❌ Erro ao enviar'); }
+    } catch (e) { showToast('❌ Erro ao enviar'); console.error(e); }
 }
 
-// Curtir / Descurtir
+// 2. Curtir
 async function toggleLike(commentId, mangaId) {
     const user = JSON.parse(localStorage.getItem('discordUser'));
     if (!user) return showToast('⚠️ Logue para curtir!');
-
     const docRef = dbComments.collection("comentarios").doc(commentId);
     const doc = await docRef.get();
     const likes = doc.data().likes || [];
-
     if (likes.includes(user.id)) {
         await docRef.update({ likes: firebase.firestore.FieldValue.arrayRemove(user.id) });
     } else {
@@ -2845,9 +2878,14 @@ async function toggleLike(commentId, mangaId) {
     loadComments(mangaId);
 }
 
-// Apagar Comentário
-async function deleteComment(commentId, mangaId) {
-    if (!confirm("Tem certeza que deseja apagar?")) return;
+// 3. Apagar (Abre o Modal)
+function openDeleteModal(commentId, mangaId) {
+    commentIdToDelete = commentId;
+    currentMangaIdForComments = mangaId; // Guarda o ID do mangá atual
+    openModal('deleteModal');
+}
+// Executa a exclusão no Firebase
+async function executeDeleteComment(commentId, mangaId) {
     try {
         await dbComments.collection("comentarios").doc(commentId).delete();
         showToast("🗑️ Comentário removido");
@@ -2855,118 +2893,148 @@ async function deleteComment(commentId, mangaId) {
     } catch (e) { showToast("❌ Erro ao apagar"); }
 }
 
-// Editar Comentário
-async function editComment(commentId, currentText, mangaId) {
-    const newText = prompt("Edite seu comentário:", currentText);
-    if (!newText || newText === currentText) return;
-
+// 4. Editar (Abre o Modal)
+function openEditModal(commentId, currentText, mangaId) {
+    commentIdToEdit = commentId;
+    currentMangaIdForComments = mangaId;
+    document.getElementById('editModalTextarea').value = currentText;
+    openModal('editModal');
+}
+// Executa a edição no Firebase
+async function executeEditComment(commentId, newText, mangaId) {
+    if (newText === "") return;
     try {
-        await dbComments.collection("comentarios").doc(commentId).update({ text: newText });
+        await dbComments.collection("comentarios").doc(commentId).update({ text: newText, edited: true });
         showToast("✏️ Editado!");
         loadComments(mangaId);
     } catch (e) { showToast("❌ Erro ao editar"); }
 }
 
-// Mostrar/Esconder campo de resposta
+// 5. Mostrar/Esconder campo de resposta (E ESCONDER OS BOTÕES)
 function toggleReplyInput(commentId) {
-    const el = document.getElementById(`reply-container-${commentId}`);
-    el.style.display = el.style.display === 'block' ? 'none' : 'block';
-}
-
-// Carregar e Renderizar
-async function loadComments(mangaId) {
-    const listDiv = document.getElementById('commentsList');
-    const user = JSON.parse(localStorage.getItem('discordUser'));
+    const container = document.getElementById(`reply-container-${commentId}`);
+    const commentItem = document.getElementById(`comment-${commentId}`);
     
-    try {
-        const snapshot = await dbComments.collection("comentarios")
-            .where("mangaId", "==", String(mangaId))
-            .orderBy("timestamp", "asc") // Ordem cronológica para conversas
-            .get();
-
-        const allComments = [];
-        snapshot.forEach(doc => allComments.push({id: doc.id, ...doc.data()}));
-
-        // Filtra principais e respostas
-        const mainComments = allComments.filter(c => !c.parentId);
-        
-        let html = '';
-        mainComments.forEach(c => {
-            html += renderSingleComment(c, allComments, user, mangaId);
-        });
-
-        listDiv.innerHTML = html || '<p>Nenhum comentário. Seja o primeiro!</p>';
-    } catch (e) { console.error(e); }
+    const isHidden = container.style.display === 'none';
+    container.style.display = isHidden ? 'block' : 'none';
+    
+    // Adiciona/Remove a classe que esconde os botões do cabeçalho
+    if (isHidden) {
+        commentItem.classList.add('replying-active');
+    } else {
+        commentItem.classList.remove('replying-active');
+    }
 }
 
-function renderSingleComment(c, allList, user, mangaId, isReply = false) {
-    const isOwner = user && user.id === c.userId;
-    const hasLiked = user && c.likes && c.likes.includes(user.id);
-    const likeCount = c.likes ? c.likes.length : 0;
+// Variável auxiliar para saber em qual mangá estamos nos modais
+let currentMangaIdForComments = null;
 
-    const commentHtml = `
-        <div class="comment-item ${isReply ? 'comment-reply' : ''}">
-            <img src="${c.userAvatar}" class="comment-avatar">
-            <div class="comment-content">
-                <div class="comment-header">
-                    <span class="comment-author">${c.userName}</span>
-                </div>
-                <div class="comment-text">${c.text}</div>
-                
-                <div class="comment-actions">
-                    <button class="action-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${c.id}', '${mangaId}')">
-                        <i class="fas fa-heart"></i> ${likeCount}
-                    </button>
-                    ${!isReply ? `<button class="action-btn" onclick="toggleReplyInput('${c.id}')">Responder</button>` : ''}
-                    
-                    ${isOwner ? `
-                        <button class="action-btn" onclick="editComment('${c.id}', '${c.text}', '${mangaId}')">Editar</button>
-                        <button class="action-btn btn-delete" onclick="deleteComment('${c.id}', '${mangaId}')">Apagar</button>
-                    ` : ''}
-                </div>
-
-                <div id="reply-container-${c.id}" class="reply-input-container">
-                    <textarea id="replyInput-${c.id}" placeholder="Escreva sua resposta..."></textarea>
-                    <button class="action-btn" onclick="submitComment('${mangaId}', '${c.id}')">Enviar</button>
-                </div>
-            </div>
-        </div>
-        ${!isReply ? allList.filter(r => r.parentId === c.id).map(r => renderSingleComment(r, allList, user, mangaId, true)).join('') : ''}
-    `;
-    return commentHtml;
-}
-
-
-// Função principal para carregar e organizar a lista
+// 6. Carregar Comentários (Principal)
 async function loadComments(mangaId) {
+    currentMangaIdForComments = mangaId;
     const listDiv = document.getElementById('commentsList');
     if (!listDiv) return;
-    
     const user = JSON.parse(localStorage.getItem('discordUser'));
     
     try {
         const snapshot = await dbComments.collection("comentarios")
             .where("mangaId", "==", String(mangaId))
-            .orderBy("timestamp", "desc") // Principais no topo
+            .orderBy("timestamp", "desc")
             .get();
-
         const allComments = [];
         snapshot.forEach(doc => allComments.push({id: doc.id, ...doc.data()}));
-
-        // Filtra os comentários principais (sem parentId)
         const mainComments = allComments.filter(c => !c.parentId);
         
         let html = '';
         mainComments.forEach(c => {
             html += renderSingleComment(c, allComments, user, mangaId);
         });
-
         listDiv.innerHTML = html || '<div class="loading-comments">Nenhum comentário. Seja o primeiro!</div>';
     } catch (e) { 
         console.error(e);
-        listDiv.innerHTML = '<div class="loading-comments">Erro ao carregar comentários. Verifique o console.</div>';
+        listDiv.innerHTML = '<div class="loading-comments" style="color:red">Erro ao carregar. Verifique se o índice do Firebase está ativo.</div>';
     }
 }
+
+// 7. Renderizar um Comentário (Estrutura HTML atualizada)
+function renderSingleComment(c, allComments, user, mangaId) {
+    const isOwner = user && user.id === c.userId;
+    const likesCount = c.likes ? c.likes.length : 0;
+    const isLiked = user && c.likes && c.likes.includes(user.id);
+    const date = c.timestamp ? new Date(c.timestamp.toDate()).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '...';
+    
+    // Ordena as respostas por data (mais antigas primeiro)
+    const replies = allComments.filter(r => r.parentId === c.id).sort((a,b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+    // Escapa caracteres HTML para segurança e permite quebra de linha
+    const safeText = c.text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
+
+    return `
+        <div class="comment-item ${c.parentId ? 'comment-reply' : ''}" id="comment-${c.id}">
+            <img src="${c.userAvatar}" class="comment-avatar" alt="${c.userName}">
+            <div class="comment-content">
+                
+                <div class="comment-header">
+                    <div class="comment-info">
+                        <span class="comment-author">${c.userName}</span>
+                        <span class="comment-date">${date} ${c.edited ? '(editado)' : ''}</span>
+                    </div>
+
+                    <div class="comment-header-actions">
+                        <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${c.id}', '${mangaId}')">
+                            <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> ${likesCount > 0 ? likesCount : ''}
+                        </button>
+
+                        <div class="comment-options">
+                            <div class="dots-icon" onclick="toggleMenu('${c.id}')">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                            <div id="menu-${c.id}" class="comment-menu">
+                                <div class="comment-menu-item" onclick="toggleReplyInput('${c.id}')">
+                                    <i class="fas fa-reply"></i> Responder
+                                </div>
+                                ${isOwner ? `
+                                    <div class="comment-menu-item" onclick="openEditModal('${c.id}', '${safeText.replace(/<br>/g, "\n")}', '${mangaId}')">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </div>
+                                    <div class="comment-menu-item item-delete" onclick="openDeleteModal('${c.id}', '${mangaId}')">
+                                        <i class="fas fa-trash"></i> Apagar
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-text">${safeText}</div>
+
+                <div id="reply-container-${c.id}" class="reply-input-container" style="display:none; margin-top:10px; animation: fadeIn 0.3s;">
+                    <textarea id="replyInput-${c.id}" placeholder="Escreva sua resposta..." rows="2"></textarea>
+                    <div style="display:flex; justify-content: flex-end; gap: 8px; margin-top:8px;">
+                        <button class="btn-cancel" onclick="toggleReplyInput('${c.id}')">Cancelar</button>
+                        <button class="btn-send" onclick="submitComment('${mangaId}', '${c.id}')">Responder</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="replies-wrapper">
+            ${replies.map(r => renderSingleComment(r, allComments, user, mangaId)).join('')}
+        </div>
+    `;
+}
+
+// Funções utilitárias de menu
+function toggleMenu(id) {
+    const allMenus = document.querySelectorAll('.comment-menu');
+    allMenus.forEach(m => { if (m.id !== `menu-${id}`) m.classList.remove('show'); });
+    document.getElementById(`menu-${id}`).classList.toggle('show');
+}
+window.addEventListener('click', (e) => {
+    if (!e.target.closest('.comment-options')) {
+        document.querySelectorAll('.comment-menu').forEach(m => m.classList.remove('show'));
+    }
+});
 
 // Função que gera o HTML de cada comentário (e suas respostas)
 function renderSingleComment(c, allComments, user, mangaId) {
