@@ -2956,73 +2956,78 @@ async function loadComments(mangaId) {
     }
 }
 
-// 7. Renderizar um Comentário (Estrutura HTML atualizada)
 function renderSingleComment(c, allComments, user, mangaId) {
     const isOwner = user && user.id === c.userId;
     const likesCount = c.likes ? c.likes.length : 0;
     const isLiked = user && c.likes && c.likes.includes(user.id);
-    const date = c.timestamp ? new Date(c.timestamp.toDate()).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '...';
     
-    // Ordena as respostas por data (mais antigas primeiro)
-    const replies = allComments.filter(r => r.parentId === c.id).sort((a,b) => (a.timestamp || 0) - (b.timestamp || 0));
+    const date = c.timestamp ? new Date(c.timestamp.toDate()).toLocaleDateString('pt-BR', {
+        day: '2-digit', month: '2-digit'
+    }) : '...';
 
-    // Escapa caracteres HTML para segurança e permite quebra de linha
-    const safeText = c.text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
+    const replies = allComments.filter(r => r.parentId === c.id).sort((a,b) => a.timestamp - b.timestamp);
 
     return `
         <div class="comment-item ${c.parentId ? 'comment-reply' : ''}" id="comment-${c.id}">
-            <img src="${c.userAvatar}" class="comment-avatar" alt="${c.userName}">
+            <img src="${c.userAvatar}" class="comment-avatar">
             <div class="comment-content">
-                
                 <div class="comment-header">
-                    <div class="comment-info">
-                        <span class="comment-author">${c.userName}</span>
-                        <span class="comment-date">${date} ${c.edited ? '(editado)' : ''}</span>
-                    </div>
-
-                    <div class="comment-header-actions">
-                        <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${c.id}', '${mangaId}')">
-                            <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> ${likesCount > 0 ? likesCount : ''}
-                        </button>
-
-                        <div class="comment-options">
-                            <div class="dots-icon" onclick="toggleMenu('${c.id}')">
-                                <i class="fas fa-ellipsis-v"></i>
+                    <span class="comment-author">${c.userName}</span>
+                    <span class="comment-date">${date}</span>
+                    <div class="comment-options" style="margin-left:auto">
+                        <div class="dots-icon" onclick="toggleMenu('${c.id}')">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div id="menu-${c.id}" class="comment-menu">
+                            <div class="comment-menu-item" onclick="toggleReplyInput('${c.id}')">
+                                <i class="fas fa-reply"></i> Responder
                             </div>
-                            <div id="menu-${c.id}" class="comment-menu">
-                                <div class="comment-menu-item" onclick="toggleReplyInput('${c.id}')">
-                                    <i class="fas fa-reply"></i> Responder
+                            ${isOwner ? `
+                                <div class="comment-menu-item" onclick="handleEdit('${c.id}', '${c.text}', '${mangaId}')">
+                                    <i class="fas fa-edit"></i> Editar
                                 </div>
-                                ${isOwner ? `
-                                    <div class="comment-menu-item" onclick="openEditModal('${c.id}', '${safeText.replace(/<br>/g, "\n")}', '${mangaId}')">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </div>
-                                    <div class="comment-menu-item item-delete" onclick="openDeleteModal('${c.id}', '${mangaId}')">
-                                        <i class="fas fa-trash"></i> Apagar
-                                    </div>
-                                ` : ''}
-                            </div>
+                                <div class="comment-menu-item item-delete" onclick="handleDelete('${c.id}', '${mangaId}')">
+                                    <i class="fas fa-trash"></i> Apagar
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                 </div>
 
-                <div class="comment-text">${safeText}</div>
+                <div class="comment-text" style="word-wrap: break-word; overflow-wrap: break-word;">
+                    ${formatCommentText(c.text)}
+                </div>
 
-                <div id="reply-container-${c.id}" class="reply-input-container" style="display:none; margin-top:10px; animation: fadeIn 0.3s;">
-                    <textarea id="replyInput-${c.id}" placeholder="Escreva sua resposta..." rows="2"></textarea>
-                    <div style="display:flex; justify-content: flex-end; gap: 8px; margin-top:8px;">
+                <div class="comment-actions">
+                    <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${c.id}', '${mangaId}')">
+                        <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> ${likesCount}
+                    </button>
+                    <button class="action-btn" onclick="toggleReplyInput('${c.id}')" style="background:none; border:none; color:var(--text-gray); font-size:12px; cursor:pointer; margin-left:10px;">Responder</button>
+                </div>
+
+                <div id="reply-container-${c.id}" class="reply-input-container" style="display:none; margin-top:10px;">
+                    <textarea id="replyInput-${c.id}" placeholder="Adicione uma resposta..."></textarea>
+                    <div style="display:flex; justify-content: flex-end; gap: 5px; margin-top:5px;">
                         <button class="btn-cancel" onclick="toggleReplyInput('${c.id}')">Cancelar</button>
                         <button class="btn-send" onclick="submitComment('${mangaId}', '${c.id}')">Responder</button>
                     </div>
                 </div>
+
+                ${replies.length > 0 ? `
+                    <div class="replies-section" style="margin-top:10px">
+                        <button class="toggle-replies-btn" onclick="toggleReplies(this, '${c.id}')" style="background:none; border:none; color:#3ea6ff; font-weight:bold; cursor:pointer; display:flex; align-items:center; gap:5px;">
+                            <i class="fas fa-caret-down"></i> Mostrar respostas (${replies.length})
+                        </button>
+                        <div id="replies-container-${c.id}" style="display:none; margin-left:20px; border-left: 2px solid var(--border-color); padding-left:10px;">
+                            ${replies.map(r => renderSingleComment(r, allComments, user, mangaId)).join('')}
+                        </div>
+                    </div>
+                ` : ''}
             </div>
-        </div>
-        
-        <div class="replies-wrapper">
-            ${replies.map(r => renderSingleComment(r, allComments, user, mangaId)).join('')}
         </div>
     `;
 }
+
 
 // Funções utilitárias de menu
 function toggleMenu(id) {
@@ -3036,18 +3041,15 @@ window.addEventListener('click', (e) => {
     }
 });
 
-// Função que gera o HTML de cada comentário (e suas respostas)
 function renderSingleComment(c, allComments, user, mangaId) {
     const isOwner = user && user.id === c.userId;
     const likesCount = c.likes ? c.likes.length : 0;
     const isLiked = user && c.likes && c.likes.includes(user.id);
     
-    // Formata a data
     const date = c.timestamp ? new Date(c.timestamp.toDate()).toLocaleDateString('pt-BR', {
         day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
     }) : 'Enviando...';
 
-    // Busca respostas para este comentário
     const replies = allComments.filter(r => r.parentId === c.id).sort((a,b) => a.timestamp - b.timestamp);
 
     return `
@@ -3056,9 +3058,8 @@ function renderSingleComment(c, allComments, user, mangaId) {
             <div class="comment-content">
                 <div class="comment-header">
                     <span class="comment-author">${c.userName}</span>
-                    <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
                         <span class="comment-date">${date}</span>
-                        
                         <div class="comment-options">
                             <div class="dots-icon" onclick="toggleMenu('${c.id}')">
                                 <i class="fas fa-ellipsis-v"></i>
@@ -3080,11 +3081,16 @@ function renderSingleComment(c, allComments, user, mangaId) {
                     </div>
                 </div>
 
-                <div class="comment-text">${c.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+                <div class="comment-text" style="word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap; max-width: 100%;">
+                    ${formatCommentText(c.text)}
+                </div>
 
                 <div class="comment-actions">
                     <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${c.id}', '${mangaId}')">
                         <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> ${likesCount}
+                    </button>
+                    <button class="btn-reply-simple" onclick="toggleReplyInput('${c.id}')" style="background:none; border:none; color:var(--text-gray); font-size:12px; cursor:pointer; margin-left:10px;">
+                        Responder
                     </button>
                 </div>
 
@@ -3095,13 +3101,22 @@ function renderSingleComment(c, allComments, user, mangaId) {
                         <button class="btn-send" onclick="submitComment('${mangaId}', '${c.id}')">Responder</button>
                     </div>
                 </div>
+
+                ${replies.length > 0 ? `
+                    <div class="replies-section" style="margin-top: 10px;">
+                        <button class="toggle-replies-btn" onclick="toggleReplies(this, '${c.id}')" style="background:none; border:none; color:#3ea6ff; font-weight:bold; cursor:pointer; display:flex; align-items:center; gap:5px; padding:5px 0;">
+                            <i class="fas fa-caret-down"></i> Mostrar respostas (${replies.length})
+                        </button>
+                        <div id="replies-container-${c.id}" class="replies-wrapper" style="display:none; margin-left: 20px; border-left: 2px solid var(--border-color); padding-left: 10px;">
+                            ${replies.map(r => renderSingleComment(r, allComments, user, mangaId)).join('')}
+                        </div>
+                    </div>
+                ` : ''}
             </div>
-        </div>
-        <div class="replies-wrapper">
-            ${replies.map(r => renderSingleComment(r, allComments, user, mangaId)).join('')}
         </div>
     `;
 }
+
 
 // Função para abrir/fechar o menu de três pontinhos
 function toggleMenu(id) {
@@ -3137,35 +3152,7 @@ function toggleMenu(id) {
     document.getElementById(`menu-${id}`).classList.toggle('show');
 }
 
-// 2. Apagar comentário
-async function deleteComment(id, mangaId) {
-    if(!confirm("Tem certeza que deseja apagar seu comentário?")) return;
-    
-    try {
-        await dbComments.collection("comentarios").doc(id).delete();
-        showToast("🗑️ Comentário removido!");
-        loadComments(mangaId); // Recarrega a lista
-    } catch (e) {
-        showToast("❌ Erro ao apagar.");
-    }
-}
 
-// 3. Editar comentário
-async function editComment(id, oldText, mangaId) {
-    const newText = prompt("Edite seu comentário:", oldText);
-    if (!newText || newText === oldText) return;
-
-    try {
-        await dbComments.collection("comentarios").doc(id).update({
-            text: newText,
-            edited: true // Opcional: marca que foi editado
-        });
-        showToast("✏️ Comentário editado!");
-        loadComments(mangaId);
-    } catch (e) {
-        showToast("❌ Erro ao editar.");
-    }
-}
 
 // 4. Responder (Simples: menciona o nome no input)
 function replyComment(name) {
@@ -3180,5 +3167,112 @@ function replyComment(name) {
 window.onclick = function(event) {
     if (!event.target.matches('.dots-icon') && !event.target.matches('.fa-ellipsis-v')) {
         document.querySelectorAll('.comment-menu').forEach(menu => menu.classList.remove('show'));
+    }
+}
+
+
+// 1. Função para formatar o texto com "Ler Mais"
+function formatCommentText(text, limit = 150) {
+    // Escapa caracteres HTML por segurança
+    const safeText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
+    
+    if (text.length <= limit) return `<span>${safeText}</span>`;
+    
+    const shortText = text.substring(0, limit).replace(/\n/g, "<br>");
+    return `
+        <span class="text-short">${shortText}...</span>
+        <span class="text-full" style="display:none">${safeText}</span>
+        <div class="read-more-btn" onclick="toggleReadMore(this)">Ler mais</div>
+    `;
+}
+
+// 2. Função para expandir/recolher o texto
+function toggleReadMore(btn) {
+    const container = btn.parentElement;
+    const short = container.querySelector('.text-short');
+    const full = container.querySelector('.text-full');
+    
+    if (full.style.display === 'none') {
+        full.style.display = 'inline';
+        short.style.display = 'none';
+        btn.innerText = 'Ler menos';
+    } else {
+        full.style.display = 'none';
+        short.style.display = 'inline';
+        btn.innerText = 'Ler mais';
+    }
+}
+
+// =========================================
+// LOGICA DE INTERAÇÃO DOS COMENTÁRIOS (NOVO)
+// =========================================
+
+// 1. Mostrar/Esconder respostas (CONSERTADO)
+function toggleReplies(btn, id) {
+    const container = document.getElementById(`replies-container-${id}`);
+    if (!container) return; // Segurança caso o ID mude
+    
+    const isHidden = container.style.display === 'none';
+    
+    container.style.display = isHidden ? 'block' : 'none';
+    btn.innerHTML = isHidden ? 
+        `<i class="fas fa-caret-up"></i> Ocultar respostas` : 
+        `<i class="fas fa-caret-down"></i> Mostrar respostas`;
+}
+
+// 2. Apagar comentário com Janela Bonita (Sem Toast/Mensagem no canto)
+async function handleDelete(id, mangaId) {
+    const result = await Swal.fire({
+        title: 'Apagar comentário?',
+        text: "Essa ação não pode ser desfeita!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim, apagar!',
+        cancelButtonText: 'Cancelar',
+        background: 'var(--background-card)', // Usa a cor do seu tema
+        color: 'var(--text-light)'           // Usa a cor do seu texto
+    });
+
+    if (result.isConfirmed) {
+        try {
+            await dbComments.collection("comentarios").doc(id).delete();
+            // Sem showToast aqui para não aparecer mensagem no canto
+            loadComments(mangaId); 
+        } catch (e) {
+            console.error("Erro ao apagar:", e);
+        }
+    }
+}
+
+// 3. Editar comentário com Janela Bonita (Sem Toast/Mensagem no canto)
+async function handleEdit(id, oldText, mangaId) {
+    const { value: newText } = await Swal.fire({
+        title: 'Editar Comentário',
+        input: 'textarea',
+        inputValue: oldText,
+        inputPlaceholder: 'Escreva sua alteração...',
+        showCancelButton: true,
+        confirmButtonText: 'Salvar',
+        cancelButtonText: 'Cancelar',
+        background: 'var(--background-card)',
+        color: 'var(--text-light)',
+        inputAttributes: {
+            'aria-label': 'Escreva seu comentário'
+        }
+    });
+
+    if (newText && newText !== oldText) {
+        try {
+            await dbComments.collection("comentarios").doc(id).update({
+                text: newText,
+                edited: true
+            });
+            // Sem showToast aqui para ficar limpo
+            loadComments(mangaId);
+        } catch (e) {
+            console.error("Erro ao editar:", e);
+        }
     }
 }

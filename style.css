@@ -3556,49 +3556,119 @@ body.search-active .modal {
 @keyframes scaleIn { from {transform: scale(0.9);} to {transform: scale(1);} }
 
 /* =========================================
-   MELHORIAS NOS COMENTÁRIOS
+   SISTEMA DE COMENTÁRIOS ESTILO YOUTUBE
    ========================================= */
 
-/* Reorganiza o cabeçalho para facilitar esconder os botões */
+.comment-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 10px;
+    transition: background 0.3s;
+}
+
+.comment-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.comment-content {
+    flex: 1;
+    min-width: 0; /* Essencial para o wrap de texto funcionar no flexbox */
+}
+
 .comment-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start; /* Alinha ao topo */
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
 }
-.comment-info { flex: 1; }
 
-/* Agrupa os botões de ação (like e menu) */
-.comment-header-actions {
+.comment-author {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-light);
+}
+
+.comment-time {
+    font-size: 11px;
+    color: var(--text-gray);
+}
+
+.comment-text {
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text-light);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+/* Botão Ler Mais */
+.read-more-btn {
+    color: var(--text-gray);
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 13px;
+    margin-top: 4px;
+    display: inline-block;
+}
+
+.read-more-btn:hover {
+    text-decoration: underline;
+}
+
+/* Ações (Like/Responder) */
+.comment-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
-    transition: opacity 0.3s ease;
+    gap: 16px;
+    margin-top: 8px;
 }
 
-/* CLASSE MÁGICA: Esconde as ações quando estiver respondendo */
-.comment-item.replying-active .comment-header-actions {
-    display: none; /* Some com os botões */
-    pointer-events: none;
+.action-btn {
+    background: none;
+    border: none;
+    color: var(--text-gray);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
-/* CONTROLE DE INDENTAÇÃO (Nesting) */
-/* Nível 1 de resposta (recuo padrão) */
+/* Sistema de Respostas */
 .replies-wrapper {
-    margin-left: 25px;
+    margin-left: 52px;
+    margin-top: 8px;
+}
+
+.toggle-replies-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+}
+
+.replies-container {
+    display: none; /* Escondido por padrão */
     border-left: 2px solid var(--border-color);
     padding-left: 10px;
-    margin-top: 10px;
 }
 
-/* Nível 2 de resposta (recuo um pouco menor) */
-.replies-wrapper .replies-wrapper {
-    margin-left: 15px;
+.replies-container.show {
+    display: block;
 }
 
-/* Nível 3 em diante (PARE de recuar e fique abaixo) */
-.replies-wrapper .replies-wrapper .replies-wrapper {
-    margin-left: 0;
-    border-left: none;
-    padding-left: 0;
-    margin-top: 15px; /* Espaço extra entre blocos */
-}
+/* Ajuste para Tema Escuro já existente no seu root */
+[data-theme="dark"] .comment-author { color: #ffffff; }
+[data-theme="dark"] .comment-text { color: #eeeeee; }
