@@ -3276,3 +3276,33 @@ async function handleEdit(id, oldText, mangaId) {
         }
     }
 }
+
+// 2. Apagar comentário
+async function deleteComment(id, mangaId) {
+    if(!confirm("Tem certeza que deseja apagar seu comentário?")) return;
+    
+    try {
+        await dbComments.collection("comentarios").doc(id).delete();
+        showToast("🗑️ Comentário removido!");
+        loadComments(mangaId); // Recarrega a lista
+    } catch (e) {
+        showToast("❌ Erro ao apagar.");
+    }
+}
+
+// 3. Editar comentário
+async function editComment(id, oldText, mangaId) {
+    const newText = prompt("Edite seu comentário:", oldText);
+    if (!newText || newText === oldText) return;
+
+    try {
+        await dbComments.collection("comentarios").doc(id).update({
+            text: newText,
+            edited: true // Opcional: marca que foi editado
+        });
+        showToast("✏️ Comentário editado!");
+        loadComments(mangaId);
+    } catch (e) {
+        showToast("❌ Erro ao editar.");
+    }
+}
