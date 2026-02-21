@@ -91,6 +91,29 @@ try {
     }
 }
 
+
+// 🔥 CONFIGURAÇÕES DO FIREBASE PARA COMENTÁRIOS (Sua Configuração Adaptada)
+const firebaseConfigComments = {
+    apiKey: "AIzaSyCyo5uJUQgyoavnjRy7C3JJW1wY_6IMryE",
+    authDomain: "mangatachi-comments.firebaseapp.com",
+    projectId: "mangatachi-comments",
+    storageBucket: "mangatachi-comments.firebasestorage.app",
+    messagingSenderId: "644605577364",
+    appId: "1:644605577364:web:011764edba8f9b9b0e4c81"
+};
+
+let firebaseAppComments;
+let dbComments;
+try {
+    firebaseAppComments = firebase.initializeApp(firebaseConfigComments, 'comments');
+    dbComments = firebaseAppComments.firestore();
+    console.log('✅ Firebase Comentários inicializado com sucesso!');
+} catch (error) {
+    console.error('❌ Erro ao inicializar Firebase Comentários:', error);
+}
+
+
+
 // ===============================
 // SISTEMA DE BUSCA AVANÇADO
 // ===============================
@@ -1923,11 +1946,26 @@ function generateMangaDetailHTML(manga) {
                             ${generateChapterCardsSPA(manga, slug)}
                         </div>
                     </div>
+                    
+                    <div class="comments-section">
+                        <h3><i class="fas fa-comments"></i> Comentários</h3>
+                        <div class="comment-form">
+                            <textarea id="commentInput" placeholder="Deixe seu comentário sobre a obra..." rows="3"></textarea>
+                            <button id="btnSubmitComment" onclick="submitComment(${manga.id})">
+                                <i class="fas fa-paper-plane"></i> Enviar
+                            </button>
+                        </div>
+                        <div id="commentsList" class="comments-list">
+                            <div class="loading-comments"><i class="fas fa-spinner fa-spin"></i> Carregando comentários...</div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     `;
 }
+
 
 // Gerar cards de capítulos (SPA) - VERSÃO CORRIGIDA
 function generateChapterCardsSPA(manga, slug) {
@@ -2750,3 +2788,217 @@ function handleSplashScreen() {
 
 // Executa assim que o script carregar
 handleSplashScreen();
+
+
+
+// ===============================
+// SISTEMA DE COMENTÁRIOS
+// ===============================
+
+// ==========================================
+// SISTEMA AVANÇADO DE COMENTÁRIOS
+// ==========================================
+
+// Enviar comentário ou resposta
+async function submitComment(mangaId, parentId = null) {
+    const user = JSON.parse(localStorage.getItem('discordUser'));
+    if (!user) return showToast('⚠️ Faça login com o Discord!');
+
+    const idInput = parentId ? `replyInput-${parentId}` : 'commentInput';
+    const inputArea = document.getElementById(idInput);
+    const text = inputArea.value.trim();
+
+    if (!text) return;
+
+    try {
+        const avatarUrl = user.avatar 
+            ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
+            : 'https://cdn.discordapp.com/embed/avatars/0.png';
+
+        await dbComments.collection("comentarios").add({
+            mangaId: String(mangaId),
+            userId: user.id,
+            userName: user.global_name || user.username,
+            userAvatar: avatarUrl,
+            text: text,
+            parentId: parentId, // Se for null, é comentário principal. Se tiver ID, é resposta.
+            likes: [], // Array de IDs de quem curtiu
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        inputArea.value = '';
+        if(parentId) toggleReplyInput(parentId); // Esconde o campo se for resposta
+        showToast('✅ Enviado!');
+        loadComments(mangaId);
+    } catch (e) { showToast('❌ Erro ao enviar'); }
+}
+
+// Curtir / Descurtir
+async function toggleLike(commentId, mangaId) {
+    const user = JSON.parse(localStorage.getItem('discordUser'));
+    if (!user) return showToast('⚠️ Logue para curtir!');
+
+    const docRef = dbComments.collection("comentarios").doc(commentId);
+    const doc = await docRef.get();
+    const likes = doc.data().likes || [];
+
+    if (likes.includes(user.id)) {
+        await docRef.update({ likes: firebase.firestore.FieldValue.arrayRemove(user.id) });
+    } else {
+        await docRef.update({ likes: firebase.firestore.FieldValue.arrayUnion(user.id) });
+    }
+    loadComments(mangaId);
+}
+
+// Apagar Comentário
+async function deleteComment(commentId, mangaId) {
+    if (!confirm("Tem certeza que deseja apagar?")) return;
+    try {
+        await dbComments.collection("comentarios").doc(commentId).delete();
+        showToast("🗑️ Comentário removido");
+        loadComments(mangaId);
+    } catch (e) { showToast("❌ Erro ao apagar"); }
+}
+
+// Editar Comentário
+async function editComment(commentId, currentText, mangaId) {
+    const newText = prompt("Edite seu comentário:", currentText);
+    if (!newText || newText === currentText) return;
+
+    try {
+        await dbComments.collection("comentarios").doc(commentId).update({ text: newText });
+        showToast("✏️ Editado!");
+        loadComments(mangaId);
+    } catch (e) { showToast("❌ Erro ao editar"); }
+}
+
+// Mostrar/Esconder campo de resposta
+function toggleReplyInput(commentId) {
+    const el = document.getElementById(`reply-container-${commentId}`);
+    el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+// Carregar e Renderizar
+async function loadComments(mangaId) {
+    const listDiv = document.getElementById('commentsList');
+    const user = JSON.parse(localStorage.getItem('discordUser'));
+    
+    try {
+        const snapshot = await dbComments.collection("comentarios")
+            .where("mangaId", "==", String(mangaId))
+            .orderBy("timestamp", "asc") // Ordem cronológica para conversas
+            .get();
+
+        const allComments = [];
+        snapshot.forEach(doc => allComments.push({id: doc.id, ...doc.data()}));
+
+        // Filtra principais e respostas
+        const mainComments = allComments.filter(c => !c.parentId);
+        
+        let html = '';
+        mainComments.forEach(c => {
+            html += renderSingleComment(c, allComments, user, mangaId);
+        });
+
+        listDiv.innerHTML = html || '<p>Nenhum comentário. Seja o primeiro!</p>';
+    } catch (e) { console.error(e); }
+}
+
+function renderSingleComment(c, allList, user, mangaId, isReply = false) {
+    const isOwner = user && user.id === c.userId;
+    const hasLiked = user && c.likes && c.likes.includes(user.id);
+    const likeCount = c.likes ? c.likes.length : 0;
+
+    const commentHtml = `
+        <div class="comment-item ${isReply ? 'comment-reply' : ''}">
+            <img src="${c.userAvatar}" class="comment-avatar">
+            <div class="comment-content">
+                <div class="comment-header">
+                    <span class="comment-author">${c.userName}</span>
+                </div>
+                <div class="comment-text">${c.text}</div>
+                
+                <div class="comment-actions">
+                    <button class="action-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${c.id}', '${mangaId}')">
+                        <i class="fas fa-heart"></i> ${likeCount}
+                    </button>
+                    ${!isReply ? `<button class="action-btn" onclick="toggleReplyInput('${c.id}')">Responder</button>` : ''}
+                    
+                    ${isOwner ? `
+                        <button class="action-btn" onclick="editComment('${c.id}', '${c.text}', '${mangaId}')">Editar</button>
+                        <button class="action-btn btn-delete" onclick="deleteComment('${c.id}', '${mangaId}')">Apagar</button>
+                    ` : ''}
+                </div>
+
+                <div id="reply-container-${c.id}" class="reply-input-container">
+                    <textarea id="replyInput-${c.id}" placeholder="Escreva sua resposta..."></textarea>
+                    <button class="action-btn" onclick="submitComment('${mangaId}', '${c.id}')">Enviar</button>
+                </div>
+            </div>
+        </div>
+        ${!isReply ? allList.filter(r => r.parentId === c.id).map(r => renderSingleComment(r, allList, user, mangaId, true)).join('') : ''}
+    `;
+    return commentHtml;
+}
+
+
+// Carrega os comentários daquele mangá específico
+async function loadComments(mangaId) {
+    const commentsList = document.getElementById('commentsList');
+    if (!commentsList) return;
+
+    try {
+        // Busca os comentários referentes a este mangá específico, ordenados pela data
+        const snapshot = await dbComments.collection("comentarios")
+            .where("mangaId", "==", String(mangaId))
+            .orderBy("timestamp", "desc")
+            .get();
+
+        if (snapshot.empty) {
+            commentsList.innerHTML = '<div class="loading-comments">Seja o primeiro a comentar!</div>';
+            return;
+        }
+
+        let html = '';
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            // Formata a data se ela existir no servidor
+            const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString('pt-BR', {
+                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            }) : 'Agora mesmo';
+
+            html += `
+                <div class="comment-item">
+                    <img src="${data.userAvatar}" alt="Avatar" class="comment-avatar">
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">${data.userName}</span>
+                            <span class="comment-date">${date}</span>
+                        </div>
+                        <div class="comment-text">${data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        commentsList.innerHTML = html;
+    } catch (error) {
+        console.error("Erro ao buscar comentários:", error);
+        
+        // Trata erro de índice do Firebase (Muito Comum!)
+        if(error.message.includes("index")) {
+            console.error("VOCÊ PRECISA CRIAR O ÍNDICE NO FIREBASE! CLIQUE NO LINK DE ERRO GERADO NO CONSOLE.");
+            commentsList.innerHTML = '<div class="loading-comments" style="color: red;">O desenvolvedor precisa ativar os índices no Firebase (veja o console do navegador).</div>';
+        } else {
+            commentsList.innerHTML = '<div class="loading-comments">Erro ao carregar comentários.</div>';
+        }
+    }
+}
+
+// Por fim, injetar o carregamento quando a página de detalhes abre
+// Vamos substituir a função original setupMangaDetailEvents para chamar os comentários:
+const originalSetupMangaDetailEvents = setupMangaDetailEvents;
+setupMangaDetailEvents = function(manga) {
+    originalSetupMangaDetailEvents(manga);
+    loadComments(manga.id);
+};
