@@ -1,6 +1,8 @@
 // CONSTANTES DO SISTEMA
 const SITE_VERSION = "3.0.2 (16)";
 const ADMIN_ID = "1365436275351486504"; // Coloque aqui o seu ID numérico do Discord
+const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1475103305398096006/X2Ed2bypElXcZW6iOexu9yCsxjaUnTeGhISxHEuXjlw4BUy04qxaOo9IDpKt9z3BNVvP";
+
 
 
 // ==========================================
@@ -2847,6 +2849,8 @@ async function submitComment(mangaId, parentId = null) {
 
     try {
         const avatarUrl = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png';
+        
+        // Salva no Firebase
         await dbComments.collection("comentarios").add({
             mangaId: String(mangaId),
             userId: user.id,
@@ -2857,12 +2861,26 @@ async function submitComment(mangaId, parentId = null) {
             likes: [],
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
+
+        // --- LÓGICA DO DISCORD ---
+        // 1. Tenta achar o nome do mangá na lista global 'mangas'
+        const mangaObj = typeof mangas !== 'undefined' ? mangas.find(m => m.id == mangaId) : null;
+        const mangaTitle = mangaObj ? mangaObj.title : `ID: ${mangaId}`;
+        const authorName = user.global_name || user.username;
+
+        // 2. Envia para o Webhook
+        sendToDiscordWebhook(authorName, mangaTitle, text, !!parentId);
+        // -------------------------
+
         inputArea.value = '';
-        if(parentId) toggleReplyInput(parentId); // Fecha a caixa de resposta
-       // showToast('✅ Enviado!');
+        if(parentId) toggleReplyInput(parentId); 
         loadComments(mangaId);
-    } catch (e) { showToast('❌ Erro ao enviar'); console.error(e); }
+    } catch (e) { 
+        showToast('❌ Erro ao enviar'); 
+        console.error(e); 
+    }
 }
+
 
 // 2. Curtir
 async function toggleLike(commentId, mangaId) {
@@ -3323,3 +3341,30 @@ async function editComment(id, oldText, mangaId) {
 
 
 
+async function sendCommentToDiscord(userName, mangaTitle, commentText) {
+    if (!DISCORD_WEBHOOK_URL) return;
+
+    const payload = {
+        embeds: [{
+            title: "💬 Novo Comentário Recebido!",
+            color: 5814783, // Cor azul
+            fields: [
+                { name: "👤 Usuário", value: userName, inline: true },
+                { name: "📚 Mangá", value: mangaTitle, inline: true },
+                { name: "📝 Comentário", value: commentText },
+                { name: "⏰ Horário", value: new Date().toLocaleString('pt-BR') }
+            ],
+            footer: { text: "MangaTachi Alerts" }
+        }]
+    };
+
+    try {
+        await fetch(DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    } catch (e) {
+        console.error("Erro ao enviar para o Discord:", e);
+    }
+}
