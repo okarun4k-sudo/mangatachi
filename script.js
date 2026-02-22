@@ -3341,8 +3341,6 @@ async function editComment(id, oldText, mangaId) {
 
 
 
-async function sendCommentToDiscord(userName, mangaTitle, commentText) {
-    if (!DISCORD_WEBHOOK_URL) return;
 
     // Função correta para enviar o Webhook do Discord
 async function sendToDiscordWebhook(userName, mangaTitle, text, isReply) {
@@ -3374,4 +3372,4 @@ async function sendToDiscordWebhook(userName, mangaTitle, text, isReply) {
     }
 }
 
-}
+
