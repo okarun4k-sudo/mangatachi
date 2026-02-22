@@ -3678,3 +3678,180 @@ body.search-active .modal {
 
 
 
+/* ====== CSS NOVO DO LAYOUT PREMIUM (TEMA ESCURO NATIVO) ====== */
+
+.manga-detail-spa.premium-design {
+    background-color: #121212 !important;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #fff;
+}
+
+/* Banner com Blur */
+.manga-hero-banner {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 350px;
+    background-size: cover;
+    background-position: center 20%;
+    z-index: 1;
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to bottom, rgba(18,18,18,0.2) 0%, #121212 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.btn-back-floating {
+    position: absolute;
+    top: 20px; left: 20px;
+    background: rgba(0,0,0,0.5);
+    color: white; border: none;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    font-size: 18px; cursor: pointer; z-index: 10;
+}
+
+/* Informações da Capa */
+.premium-main-info {
+    position: relative;
+    z-index: 5;
+    display: flex; gap: 20px;
+    padding: 80px 20px 0;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.hero-cover {
+    width: 160px; height: 230px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+}
+
+.hero-text-content {
+    display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 5px;
+}
+
+.hero-title {
+    font-size: 26px; font-weight: 800; line-height: 1.2;
+    margin-bottom: 5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+}
+
+.hero-author { font-size: 15px; color: #ccc; margin-bottom: 10px; }
+.hero-stats { cursor: pointer; margin-bottom: 15px; }
+
+.genres-premium {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px;
+}
+.genre-tag-premium {
+    background-color: #2a2a2a;
+    color: #ccc; font-size: 10px; font-weight: 700;
+    padding: 4px 8px; border-radius: 4px;
+}
+
+.hero-status {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 600; color: #ccc;
+}
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+/* Corpo Principal */
+.premium-body-content {
+    position: relative; z-index: 5;
+    max-width: 1000px; margin: 25px auto 0; padding: 0 20px;
+}
+
+/* Botões Estilo App */
+.action-bar-premium {
+    display: flex; gap: 10px; margin-bottom: 25px;
+}
+
+.btn-action-icon {
+    background-color: #333; border: none; color: #fff;
+    width: 50px; height: 50px; border-radius: 8px;
+    font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.btn-read-now {
+    flex: 1; background-color: #444; color: white;
+    border: none; border-radius: 8px; font-size: 18px; font-weight: bold;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+
+/* Sinopse */
+.manga-description-premium { margin-bottom: 20px; }
+.manga-description-premium p {
+    font-size: 15px; line-height: 1.5; color: #bbb;
+}
+.manga-description-premium p.collapsed {
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.read-more-wrapper { display: flex; justify-content: center; margin-top: -10px; position: relative; z-index: 2; }
+.read-more-btn {
+    background-color: #ff6b6b; color: white; border: none;
+    padding: 2px 15px; border-radius: 0 0 8px 8px;
+    font-size: 12px; font-weight: bold; cursor: pointer;
+}
+
+/* Abas */
+.premium-tabs {
+    display: flex; gap: 20px;
+    border-bottom: 2px solid #333; margin-bottom: 20px;
+}
+.tab-btn {
+    background: transparent; border: none; color: #888;
+    font-size: 16px; font-weight: bold; padding: 10px 10px; cursor: pointer;
+    position: relative;
+}
+.tab-btn.active { color: #fff; }
+.tab-btn.active::after {
+    content: ''; position: absolute;
+    bottom: -2px; left: 0; right: 0; height: 3px;
+    background-color: #ff6b6b; border-radius: 3px 3px 0 0;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+/* Capítulos */
+.chapters-header {
+    display: flex; justify-content: space-between;
+    font-size: 16px; color: #fff; margin-bottom: 15px;
+}
+.chapter-list-premium { display: flex; flex-direction: column; gap: 10px; }
+.chapter-card-modern {
+    background-color: #1e1e1e;
+    border-radius: 6px; padding: 15px;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+    border-left: 2px solid #3ea6ff; /* Detalhe azul */
+}
+.chapter-title-wrapper {
+    display: flex; align-items: center;
+    font-size: 15px; font-weight: bold; color: #fff;
+}
+.chap-sub { margin-left: 8px; color: #888; font-weight: normal; }
+
+.btn-dl-row { background: transparent; border: none; color: #888; font-size: 18px; cursor: pointer; }
+
+/* Comentários */
+.comment-form-premium textarea {
+    width: 100%; background: #1e1e1e; border: 1px solid #333;
+    border-radius: 8px; color: #fff; padding: 15px; resize: vertical; margin-bottom: 10px;
+}
+.comment-form-premium button {
+    background: #1e88e5; border: none; color: white;
+    padding: 10px 20px; border-radius: 8px; cursor: pointer; float: right; font-weight: bold;
+}
+
+@media (max-width: 600px) {
+    .premium-main-info { padding-top: 100px; flex-direction: column; align-items: center; text-align: center; }
+    .hero-cover { width: 130px; height: 190px; }
+    .hero-title { font-size: 22px; }
+    .genres-premium { justify-content: center; }
+    .hero-status { justify-content: center; }
+}

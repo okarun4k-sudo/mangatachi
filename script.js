@@ -1886,107 +1886,133 @@ function findChapter(manga, chapterNumber) {
     return null;
 }
 
-// Gerar HTML da página de detalhes (SPA) - COM SISTEMA AUTOMÁTICO DE DIREITOS AUTORAIS
+
+
+// Gerar HTML da página de detalhes (SPA) - DESIGN PREMIUM REFEITO (Idêntico à Imagem)
 function generateMangaDetailHTML(manga) {
     const totalChapters = getTotalChapters(manga);
     const slug = slugify(manga.title);
     
+    // Status formatado como na imagem
+    const isOngoing = manga.status === 'Em andamento' || manga.status === 'Ongoing';
+    const statusColor = isOngoing ? '#2fe85d' : '#888';
+    
     return `
-        <div class="manga-detail-spa">
-            <div class="section-card">
-                <div class="section-header">
-                    <button onclick="goBackToHome()" class="btn-back" style="margin-right: 1rem;">
-                        <i class="fas fa-arrow-left"></i> Voltar
-                    </button>
-                    <h2>${manga.title}</h2>
+        <div class="manga-detail-spa premium-design">
+            <div class="manga-hero-banner" style="background-image: url('${manga.coverUrl}')">
+                <div class="banner-overlay"></div>
+                <button onclick="goBackToHome()" class="btn-back-floating">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+
+            <div class="premium-main-info">
+                <div class="hero-cover-wrapper">
+                    <img src="${manga.coverUrl}" alt="${manga.title}" class="hero-cover">
                 </div>
                 
-                <div class="manga-detail-content">
-                    <div class="manga-detail-main">
-                        <img src="${manga.coverUrl}" alt="${manga.title}" class="manga-detail-cover" loading="lazy">
-                        
-                        <div class="manga-detail-info">
-                            <!-- SEÇÃO DE DIREITOS AUTORAIS AUTOMÁTICA -->
-                            ${generateCopyrightSection(manga)}
-                            <!-- FIM DOS DIREITOS AUTORAIS -->
-
-                            <div class="manga-detail-meta">
-                                <div class="meta-item">
-                                    <i class="fas fa-user-pen"></i>
-                                    <span><strong>Autor:</strong> ${manga.author}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <i class="fas fa-chart-line"></i>
-                                    <span><strong>Status:</strong> ${manga.status}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <i class="fas fa-users"></i>
-                                    <span><strong>Equipe:</strong> ${manga.translationTeam}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <i class="fas fa-book"></i>
-                                    <span><strong>Capítulos:</strong> ${totalChapters}</span>
-                                </div>
-                            </div>
-                            
-                            <div class="genres">
-                                ${manga.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('')}
-                            </div>
-                            
-                            <!-- SISTEMA DE CURTIDAS (ESTILO YOUTUBE) -->
-                            ${generateLikeButton(manga)}
-                            
-                            <div class="manga-description">
-                                <h3><i class="fas fa-file-text"></i> Sinopse</h3>
-                                <p>${manga.description}</p>
-                            </div>
-                        </div>
+                <div class="hero-text-content">
+                    <h2 class="hero-title">${manga.title}</h2>
+                    <p class="hero-author">${manga.author || 'Autor Desconhecido'}</p>
+                    
+                    <div class="hero-stats" onclick="document.querySelector('.hidden-original-like .like-btn').click()">
+                        <i class="fas fa-star" style="color: #ff6b6b;"></i> 
+                        <span id="starLikeCount-${manga.id}" style="color: #fff; font-weight: bold; margin-left: 5px;">0</span>
                     </div>
                     
-                    <div class="chapters-section">
-                        <h3><i class="fas fa-book"></i> Capítulos Disponíveis</h3>
-                        <div class="chapter-grid-spa">
+                    <div class="genres-premium">
+                        ${manga.genres.map(genre => `<span class="genre-tag-premium">${genre.toUpperCase()}</span>`).join('')}
+                    </div>
+                    
+                    <div class="hero-status">
+                        <span class="status-dot" style="background-color: ${statusColor}"></span>
+                        PUBLICAÇÃO: ${isOngoing ? 'EM ANDAMENTO' : 'FINALIZADO'}
+                    </div>
+                </div>
+            </div>
+
+            <div class="premium-body-content">
+                <div class="action-bar-premium">
+                    <button class="btn-action-icon" onclick="document.querySelector('.hidden-original-like .like-btn').click()">
+                        <i class="far fa-star"></i>
+                    </button>
+                    <button class="btn-action-icon">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                    <button class="btn-read-now" onclick="openFirstChapter(${manga.id})">
+                        <i class="fas fa-book-open"></i> Ler
+                    </button>
+                </div>
+
+                <div class="manga-description-premium">
+                    <p id="synopsis-text" class="collapsed">${manga.description}</p>
+                    <div class="read-more-wrapper">
+                        <button class="read-more-btn" onclick="toggleSynopsis()">
+                            <i class="fas fa-chevron-down"></i> ver mais <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="premium-tabs">
+                    <button class="tab-btn active" onclick="switchTab('chapters')">Capítulos</button>
+                    <button class="tab-btn" onclick="switchTab('comments')">Comentários</button>
+                </div>
+
+                <div class="tabs-container">
+                    
+                    <div id="tab-chapters" class="tab-content active">
+                        <div class="chapters-header">
+                            <span>Todos os Capítulos</span>
+                            <span>Capítulo 1 - ${totalChapters}</span>
+                        </div>
+                        <div class="chapter-list-premium">
                             ${generateChapterCardsSPA(manga, slug)}
                         </div>
                     </div>
-                    
-                    <div class="comments-section">
-                        <h3><i class="fas fa-comments"></i> Comentários</h3>
-                        <div class="comment-form">
-                            <textarea id="commentInput" placeholder="Deixe seu comentário sobre a obra..." rows="3"></textarea>
-                            <button id="btnSubmitComment" onclick="submitComment(${manga.id})">
-                                <i class="fas fa-paper-plane"></i> Enviar
-                            </button>
-                        </div>
-                        <div id="commentsList" class="comments-list">
-                            <div class="loading-comments"><i class="fas fa-spinner fa-spin"></i> Carregando comentários...</div>
+
+                    <div id="tab-comments" class="tab-content">
+                        <div class="comments-section-premium">
+                            <div class="comment-form-premium">
+                                <textarea id="commentInput" placeholder="Deixe um comentário..." rows="3"></textarea>
+                                <button id="btnSubmitComment" onclick="submitComment(${manga.id})">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                                <div style="clear: both;"></div>
+                            </div>
+                            <div id="commentsList" class="comments-list" style="margin-top: 20px;">
+                                <div class="loading-comments"><i class="fas fa-spinner fa-spin"></i> Carregando comentários...</div>
+                            </div>
                         </div>
                     </div>
-
                 </div>
+                
+                <div style="margin-top: 40px; padding-bottom: 20px;">
+                    ${generateCopyrightSection(manga)}
+                </div>
+            </div>
+            
+            <div style="display:none;" class="hidden-original-like">
+                ${generateLikeButton(manga)}
             </div>
         </div>
     `;
 }
 
-
-// Gerar cards de capítulos (SPA) - VERSÃO CORRIGIDA
+// Gerar cards de capítulos (SPA) - LISTA MODERNA (Igual à Imagem)
+// Gerar cards de capítulos (SPA) - LISTA MODERNA (Com a Bandeira do Brasil 🇧🇷)
 function generateChapterCardsSPA(manga, slug) {
     let chaptersHTML = '';
     let allChapters = [];
     
-    // Coletar todos os capítulos de todas as fontes
     if (manga.oneshot) allChapters.push(...manga.oneshot);
     if (manga.chapters) allChapters.push(...manga.chapters);
     if (manga.volumes) {
         manga.volumes.forEach(volume => {
-            if (volume.chapters) {
-                allChapters.push(...volume.chapters);
-            }
+            if (volume.chapters) allChapters.push(...volume.chapters);
         });
     }
     
-    // Ordenar capítulos (oneshot primeiro, depois por número decrescente)
+    // Do mais recente para o mais antigo
     allChapters.sort((a, b) => {
         if (a.type === 'oneshot') return -1;
         if (b.type === 'oneshot') return 1;
@@ -1994,45 +2020,78 @@ function generateChapterCardsSPA(manga, slug) {
     });
     
     allChapters.forEach(chapter => {
-        const chapterNum = chapter.type === 'oneshot' ? 'oneshot' : chapter.chapterNumber;
+        const isOS = chapter.type === 'oneshot';
+        const title = isOS ? 'Oneshot' : `Cap. ${chapter.chapterNumber}`;
+        const subTitle = chapter.title ? `- ${chapter.title}` : '';
         
         chaptersHTML += `
-            <div class="chapter-card-spa" onclick="openReader('${chapter.type}', ${manga.id}, ${chapter.type === 'oneshot' ? '' : chapter.chapterNumber})">
-                <div class="chapter-info">
-                    <div class="chapter-title">
-                        ${chapter.type === 'oneshot' ? 
-                            `<i class="fas fa-bullseye"></i> Oneshot` : 
-                            `<i class="fas fa-book"></i> Capítulo ${chapter.chapterNumber}`
-                        }
-                    </div>
-                    ${chapter.title && chapter.type !== 'oneshot' ? 
-                        `<div class="chapter-subtitle">${chapter.title}</div>` : 
-                        ''
-                    }
-                    <div class="chapter-meta">
-                        <i class="fas fa-file-image"></i> ${chapter.pages ? chapter.pages.length : 0} páginas
-                    </div>
+            <div class="chapter-card-modern" onclick="openReader('${chapter.type}', ${manga.id}, ${isOS ? '' : chapter.chapterNumber})">
+                <div class="chapter-title-wrapper">
+                    <i class="far fa-eye" class="eye-icon"></i>
+                    <img src="https://flagcdn.com/w20/br.png" class="flag-icon" alt="PT-BR">
+                    <span class="chap-name">${title}</span>
+                    <span class="chap-sub">${subTitle}</span>
                 </div>
-                ${checkDownloadAvailability(manga.id) && chapter.type !== 'oneshot' ? `
-                    <button class="download-btn-small" onclick="event.stopPropagation(); downloadChapter(${manga.id}, ${chapter.chapterNumber})">
+                ${checkDownloadAvailability(manga.id) && !isOS ? `
+                    <button class="btn-dl-row" onclick="event.stopPropagation(); downloadChapter(${manga.id}, ${chapter.chapterNumber})">
                         <i class="fas fa-download"></i>
                     </button>
-                ` : '<i class="fas fa-chevron-right"></i>'}
+                ` : ''}
             </div>
         `;
     });
     
-    if (!chaptersHTML) {
-        chaptersHTML = `
-            <div class="no-chapters">
-                <i class="fas fa-exclamation-circle"></i>
-                <p>Nenhum capítulo disponível</p>
-            </div>
-        `;
-    }
-    
-    return chaptersHTML;
+    return chaptersHTML || '<p style="color:var(--text-gray); padding: 20px;">Nenhum capítulo disponível.</p>';
 }
+
+// Funções de Interface (Adicione no final do script.js)
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    event.currentTarget.classList.add('active');
+    document.getElementById('tab-' + tabName).classList.add('active');
+}
+
+function toggleSynopsis() {
+    const text = document.getElementById('synopsis-text');
+    const btn = document.querySelector('.manga-description-premium .read-more-btn');
+    
+    if (text.classList.contains('collapsed')) {
+        text.classList.remove('collapsed');
+        btn.innerHTML = '<i class="fas fa-chevron-up"></i> ver menos <i class="fas fa-chevron-up"></i>';
+    } else {
+        text.classList.add('collapsed');
+        btn.innerHTML = '<i class="fas fa-chevron-down"></i> ver mais <i class="fas fa-chevron-down"></i>';
+    }
+}
+
+function openFirstChapter(mangaId) {
+    const manga = mangas.find(m => m.id === mangaId);
+    if (!manga) return;
+    
+    let allChapters = [];
+    if (manga.oneshot) allChapters.push(...manga.oneshot);
+    if (manga.chapters) allChapters.push(...manga.chapters);
+    if (manga.volumes) { manga.volumes.forEach(v => { if (v.chapters) allChapters.push(...v.chapters); }); }
+    
+    if (allChapters.length > 0) {
+        const first = allChapters.sort((a,b) => (a.chapterNumber || 0) - (b.chapterNumber || 0))[0];
+        openReader(first.type, mangaId, first.chapterNumber);
+    }
+}
+
+// SINCRONIZAR LIKE OCULTO COM ESTRELA (Adicione no final do script.js)
+setInterval(() => {
+    // Busca o contador do seu sistema original e replica na estrela
+    const hiddenLikes = document.querySelectorAll('.hidden-original-like .like-count');
+    hiddenLikes.forEach(originalNode => {
+        const idStr = originalNode.id.split('-')[1];
+        const starSpan = document.getElementById(`starLikeCount-${idStr}`);
+        if(starSpan) starSpan.innerText = originalNode.innerText;
+    });
+}, 1000);
+
 
 // Gerar HTML do leitor (SPA)
 function generateMangaReaderHTML(manga, chapter) {
