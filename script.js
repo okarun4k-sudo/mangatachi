@@ -1,5 +1,7 @@
 // CONSTANTES DO SISTEMA
 const SITE_VERSION = "3.0.2 (16)";
+const ADMIN_ID = "1365436275351486504"; // Coloque aqui o seu ID numérico do Discord
+
 
 // ==========================================
 // PROTEÇÃO CONTRA INSPEÇÃO E CÓPIA
@@ -53,6 +55,7 @@ let currentView = 'grid';
 let imageCache = new Map();
 let searchTimeout = null;
 let isSearchActive = false;
+let dbLikes;
 
 // CONFIGURAÇÃO DO TEMPO DE ESPERA (em segundos)
 const DOWNLOAD_WAIT_TIME = 15;
@@ -923,7 +926,7 @@ async function toggleLike(mangaId) {
             console.log('Removendo curtida...');
             const success = await likeSystem.removeLike(mangaId, user.id);
             if (success) {
-                showToast('<i class="fas fa-thumbs-up"></i> Curtida removida');
+                //showToast('<i class="fas fa-thumbs-up"></i> Curtida removida');
                 updateLikeButtonUI(mangaId, false);
             }
         } else {
@@ -931,7 +934,7 @@ async function toggleLike(mangaId) {
             console.log('Adicionando curtida...');
             const success = await likeSystem.addLike(mangaId, manga.title, user.id, user.username);
             if (success) {
-                showToast('<i class="fas fa-thumbs-up"></i> Mangá curtido!');
+               // showToast('<i class="fas fa-thumbs-up"></i> Mangá curtido!');
                 updateLikeButtonUI(mangaId, true);
             }
         }
@@ -1232,9 +1235,7 @@ function showLoginSection() {
             <button class="sidebar-btn" onclick="loginWithDiscord()">
                 <i class="fab fa-discord"></i> Entrar com Discord
             </button>
-            <button class="sidebar-btn" onclick="openRequestForm()">
-                <i class="fas fa-book-medical"></i> Pedir Tradução
-            </button>
+
             <button class="sidebar-btn" onclick="viewProfile()">
                 <i class="fas fa-id-card"></i> Meu Perfil
             </button>
@@ -1438,7 +1439,7 @@ function viewProfile() {
     if (user) {
         window.location.href = 'perfil.html';
     } else {
-        showToast('<i class="fas fa-info-circle"></i> Faça login com Discord para ver seu perfil!');
+        //showToast('<i class="fas fa-info-circle"></i> Faça login com Discord para ver seu perfil!');
     }
     toggleSidebar();
 }
@@ -1663,7 +1664,7 @@ function toggleSidebar() {
 function showMangaDetails(mangaId) {
     const manga = mangas.find(m => m.id === mangaId);
     if (!manga) {
-        showToast('<i class="fas fa-exclamation-triangle"></i> Mangá não encontrado');
+        //showToast('<i class="fas fa-exclamation-triangle"></i> Mangá não encontrado');
         return;
     }
 
@@ -1676,7 +1677,7 @@ function showMangaDetails(mangaId) {
 function openReader(type, mangaId, ...params) {
     const manga = mangas.find(m => m.id === mangaId);
     if (!manga) {
-        showToast('<i class="fas fa-exclamation-triangle"></i> Mangá não encontrado');
+        //showToast('<i class="fas fa-exclamation-triangle"></i> Mangá não encontrado');
         return;
     }
     
@@ -2313,7 +2314,7 @@ function shareManga() {
         } else {
             // Fallback: copiar para área de transferência
             navigator.clipboard.writeText(shareUrl).then(() => {
-                showToast('<i class="fas fa-link"></i> Link copiado! Cole no WhatsApp');
+                //showToast('<i class="fas fa-link"></i> Link copiado! Cole no WhatsApp');
             });
         }
     }
@@ -2523,7 +2524,7 @@ function saveTheme(theme) {
 // Mostrar toast de confirmação do tema
 function showThemeToast(theme) {
     const themeName = theme === 'light' ? 'Claro' : 'Escuro';
-    showToast(`<i class="fas fa-palette"></i> Tema ${themeName} ativado`);
+    //showToast(`<i class="fas fa-palette"></i> Tema ${themeName} ativado`);
 }
 
 // Atualizar a função initializeAuth para incluir o tema
@@ -2858,7 +2859,7 @@ async function submitComment(mangaId, parentId = null) {
         });
         inputArea.value = '';
         if(parentId) toggleReplyInput(parentId); // Fecha a caixa de resposta
-        showToast('✅ Enviado!');
+       // showToast('✅ Enviado!');
         loadComments(mangaId);
     } catch (e) { showToast('❌ Erro ao enviar'); console.error(e); }
 }
@@ -2888,7 +2889,7 @@ function openDeleteModal(commentId, mangaId) {
 async function executeDeleteComment(commentId, mangaId) {
     try {
         await dbComments.collection("comentarios").doc(commentId).delete();
-        showToast("🗑️ Comentário removido");
+        //showToast("🗑️ Comentário removido");
         loadComments(mangaId);
     } catch (e) { showToast("❌ Erro ao apagar"); }
 }
@@ -2905,7 +2906,7 @@ async function executeEditComment(commentId, newText, mangaId) {
     if (newText === "") return;
     try {
         await dbComments.collection("comentarios").doc(commentId).update({ text: newText, edited: true });
-        showToast("✏️ Editado!");
+        //showToast("✏️ Editado!");
         loadComments(mangaId);
     } catch (e) { showToast("❌ Erro ao editar"); }
 }
@@ -2958,6 +2959,12 @@ async function loadComments(mangaId) {
 
 function renderSingleComment(c, allComments, user, mangaId) {
     const isOwner = user && user.id === c.userId;
+    
+    // --- ADICIONE ESTA LINHA AQUI ---
+    const verifiedBadge = (c.userId === ADMIN_ID) ? 
+        `<i class="fas fa-check-circle" style="color: #1d9bf0; margin-left: 5px; font-size: 13px;" title="Administrador"></i>` : '';
+    // --------------------------------
+    
     const likesCount = c.likes ? c.likes.length : 0;
     const isLiked = user && c.likes && c.likes.includes(user.id);
     
@@ -3042,6 +3049,11 @@ window.addEventListener('click', (e) => {
 });
 
 function renderSingleComment(c, allComments, user, mangaId) {
+    
+    // Esta linha diz: "Se o ID de quem escreveu o comentário (c.userId) for igual ao ADMIN_ID, cria o ícone"
+    const verifiedBadge = (c.userId === ADMIN_ID) ? 
+        `<i class="fas fa-check-circle" style="color: #1d9bf0; margin-left: 5px; font-size: 13px;" title="Administrador"></i>` : '';
+    
     const isOwner = user && user.id === c.userId;
     const likesCount = c.likes ? c.likes.length : 0;
     const isLiked = user && c.likes && c.likes.includes(user.id);
@@ -3057,7 +3069,7 @@ function renderSingleComment(c, allComments, user, mangaId) {
             <img src="${c.userAvatar}" class="comment-avatar">
             <div class="comment-content">
                 <div class="comment-header">
-                    <span class="comment-author">${c.userName}</span>
+                    <span class="comment-author">${c.userName}${verifiedBadge}</span>
                     <div style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
                         <span class="comment-date">${date}</span>
                         <div class="comment-options">
@@ -3252,14 +3264,16 @@ async function handleEdit(id, oldText, mangaId) {
         title: 'Editar Comentário',
         input: 'textarea',
         inputValue: oldText,
-        inputPlaceholder: 'Escreva sua alteração...',
+        inputLabel: 'Altere sua mensagem:',
+        inputPlaceholder: 'Escreva algo...',
         showCancelButton: true,
         confirmButtonText: 'Salvar',
         cancelButtonText: 'Cancelar',
-        background: 'var(--background-card)',
-        color: 'var(--text-light)',
+        confirmButtonColor: 'var(--primary-color)',
+        background: '#1a1a1a',
+        color: '#ffffff',
         inputAttributes: {
-            'aria-label': 'Escreva seu comentário'
+            'style': 'background: #252525; color: white; border: 1px solid #444;'
         }
     });
 
@@ -3269,7 +3283,6 @@ async function handleEdit(id, oldText, mangaId) {
                 text: newText,
                 edited: true
             });
-            // Sem showToast aqui para ficar limpo
             loadComments(mangaId);
         } catch (e) {
             console.error("Erro ao editar:", e);
@@ -3277,16 +3290,17 @@ async function handleEdit(id, oldText, mangaId) {
     }
 }
 
+
 // 2. Apagar comentário
 async function deleteComment(id, mangaId) {
     if(!confirm("Tem certeza que deseja apagar seu comentário?")) return;
     
     try {
         await dbComments.collection("comentarios").doc(id).delete();
-        showToast("🗑️ Comentário removido!");
+       // showToast("🗑️ Comentário removido!");
         loadComments(mangaId); // Recarrega a lista
     } catch (e) {
-        showToast("❌ Erro ao apagar.");
+       // showToast("❌ Erro ao apagar.");
     }
 }
 
@@ -3300,9 +3314,12 @@ async function editComment(id, oldText, mangaId) {
             text: newText,
             edited: true // Opcional: marca que foi editado
         });
-        showToast("✏️ Comentário editado!");
+       // showToast("✏️ Comentário editado!");
         loadComments(mangaId);
     } catch (e) {
-        showToast("❌ Erro ao editar.");
+       // showToast("❌ Erro ao editar.");
     }
 }
+
+
+

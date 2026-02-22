@@ -3266,14 +3266,17 @@ body.search-active .modal {
     gap: 1rem;
 }
 
+/* Remove o fundo, a borda e alinha os itens na horizontal */
 .comment-item {
-    background: var(--background-card);
-    border: 1px solid var(--border-color);
-    padding: 1rem;
-    border-radius: 10px;
-    display: flex;
-    gap: 1rem;
+    background: transparent !important; /* Remove o fundo escuro */
+    border: none !important;            /* Remove a borda ao redor */
+    display: flex;                      /* Alinha Foto e Conteúdo lado a lado */
+    gap: 12px;                          /* Espaço entre a foto e o texto */
+    padding: 15px 0 !important;
+    margin-bottom: 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important; /* Linha sutil para separar */
 }
+
 
 .comment-avatar {
     width: 40px;
@@ -3672,3 +3675,6 @@ body.search-active .modal {
 /* Ajuste para Tema Escuro já existente no seu root */
 [data-theme="dark"] .comment-author { color: #ffffff; }
 [data-theme="dark"] .comment-text { color: #eeeeee; }
+
+
+
