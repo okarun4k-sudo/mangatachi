@@ -3344,17 +3344,21 @@ async function editComment(id, oldText, mangaId) {
 async function sendCommentToDiscord(userName, mangaTitle, commentText) {
     if (!DISCORD_WEBHOOK_URL) return;
 
+    // Função correta para enviar o Webhook do Discord
+async function sendToDiscordWebhook(userName, mangaTitle, text, isReply) {
+    if (!DISCORD_WEBHOOK_URL) return;
+
     const payload = {
         embeds: [{
-            title: "💬 Novo Comentário Recebido!",
-            color: 5814783, // Cor azul
+            title: isReply ? "↩️ Nova Resposta" : "💬 Novo Comentário",
+            color: isReply ? 0x3498db : 0x2ecc71, // Azul para respostas, Verde para novos comentários
             fields: [
-                { name: "👤 Usuário", value: userName, inline: true },
+                { name: "👤 Usuário", value: `**${userName}**`, inline: true },
                 { name: "📚 Mangá", value: mangaTitle, inline: true },
-                { name: "📝 Comentário", value: commentText },
-                { name: "⏰ Horário", value: new Date().toLocaleString('pt-BR') }
+                { name: "📝 Mensagem", value: text },
+                { name: "⏰ Horário", value: new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }) }
             ],
-            footer: { text: "MangaTachi Alerts" }
+            footer: { text: "MangaTachi Notifications" }
         }]
     };
 
@@ -3364,7 +3368,10 @@ async function sendCommentToDiscord(userName, mangaTitle, commentText) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-    } catch (e) {
-        console.error("Erro ao enviar para o Discord:", e);
+        console.log("✅ Webhook enviado com sucesso!");
+    } catch (err) {
+        console.error("❌ Erro Webhook Discord:", err);
     }
+}
+
 }
